@@ -1,0 +1,43 @@
+<Project>
+    <PropertyGroup>
+        <!-- Базовые настройки -->
+        <TargetFrameworks>net6.0;net8.0;netstandard2.0</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+
+        <!-- Настройки сборки -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <Deterministic>true</Deterministic>
+
+        <!-- Настройки NuGet пакета -->
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+
+        <!-- Общие метаданные пакета -->
+        <PackageId>$(AssemblyName)</PackageId>
+        <Authors>Kontur</Authors>
+        <Company>Kontur</Company>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/skbkontur</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/skbkontur/Playwright.Net.Core</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    </PropertyGroup>
+
+    <!-- Настройки анализаторов кода -->
+    <PropertyGroup>
+        <NoWarn>S3216</NoWarn>
+    </PropertyGroup>
+
+    <!-- Условия для отладочной сборки -->
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
+    <!-- Условия для релизной сборки -->
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugType>embedded</DebugType>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+</Project>
