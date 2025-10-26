@@ -6,5 +6,6 @@
     <File Path="Directory.Packages.props" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="Playwright.TestCore\Kontur.Playwright.TestCore.csproj" Type="Classic C#" />
   <Project Path="POM.Abstractions\Kontur.POM.Abstractions.csproj" />
 </Solution>

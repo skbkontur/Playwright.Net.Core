@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Инфраструктура для запуска тестов на Playwright</Description>
+        <PackageTags>library;dotnet;playwright;testcore</PackageTags>
+        <AssemblyName>Kontur.Playwright.TestCore</AssemblyName>
+        <RootNamespace>Kontur.Playwright.TestCore</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Playwright" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\POM.Abstractions\Kontur.POM.Abstractions.csproj" />
+    </ItemGroup>
+</Project>
