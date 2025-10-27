@@ -12,6 +12,7 @@
         <!-- Настройки NuGet пакета -->
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IsPackable>true</IsPackable>
+        <IncludeSymbols>true</IncludeSymbols>
 
         <!-- Общие метаданные пакета -->
         <PackageId>$(AssemblyName)</PackageId>

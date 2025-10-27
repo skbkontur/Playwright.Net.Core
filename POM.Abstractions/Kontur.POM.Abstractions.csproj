@@ -3,7 +3,6 @@
         <Description>Базовые абстракции паттерна Wrapper для реализации POM и упрощения интеграций библиотек</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IncludeSymbols>false</IncludeSymbols>
-        <IncludeBuildOutput>true</IncludeBuildOutput>
         <PackageTags>library;dotnet;abstractions;wrapper;pom</PackageTags>
         <AssemblyName>Kontur.POM.Abstractions</AssemblyName>
         <RootNamespace>Kontur.POM.Abstractions</RootNamespace>
