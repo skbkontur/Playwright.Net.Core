@@ -36,6 +36,7 @@ publish_pom_abstractions:
   variables:
     PROJECT_NAME: ${POM_PROJ}
     VERSION: ${POM_ABSTRACTIONS_VERSION}
+    NUGET_ORG_API_KEY: ${NUGET_PW_API_KEY}
   stage: publish
   when: manual
   extends: [ .package_version, .dotnet_nuget_publish ]
@@ -46,6 +47,7 @@ publish_pw_core:
   variables:
     PROJECT_NAME: ${PW_CORE_PROJ}
     VERSION: ${PW_CORE_VERSION}
+    NUGET_ORG_API_KEY: ${NUGET_PW_API_KEY}
   stage: publish
   when: manual
   extends: [ .package_version, .dotnet_nuget_publish ]
