@@ -5,10 +5,6 @@
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
 
-        <!-- Настройки сборки -->
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <Deterministic>true</Deterministic>
-
         <!-- Настройки NuGet пакета -->
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IsPackable>true</IsPackable>
@@ -19,7 +15,7 @@
         <Authors>skbkontur</Authors>
         <Company>skbkontur</Company>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/skbkontur</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/skbkontur/Playwright.Net.Core</PackageProjectUrl>
         <RepositoryUrl>https://github.com/skbkontur/Playwright.Net.Core</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
