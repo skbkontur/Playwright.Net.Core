@@ -16,8 +16,8 @@
 
         <!-- Общие метаданные пакета -->
         <PackageId>$(AssemblyName)</PackageId>
-        <Authors>Kontur</Authors>
-        <Company>Kontur</Company>
+        <Authors>skbkontur</Authors>
+        <Company>skbkontur</Company>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/skbkontur</PackageProjectUrl>
         <RepositoryUrl>https://github.com/skbkontur/Playwright.Net.Core</RepositoryUrl>
