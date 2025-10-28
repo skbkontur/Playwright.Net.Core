@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Collections;
-using Kontur.Playwright.TestCore.Dependencies;
-using Kontur.POM.Abstractions;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Collections;
+using SkbKontur.Playwright.TestCore.Dependencies;
+using SkbKontur.POM.Abstractions;
 
-namespace Kontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore.Factories;
 
 public class PageObjectsFactory(IDependenciesFactory dependenciesFactory)
     : IControlFactory, IPageFactory, IPageObjectsFactory

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Playwright;
 
-namespace Kontur.Playwright.TestCore.Browsers;
+namespace SkbKontur.Playwright.TestCore.Browsers;
 
 public interface IBrowserGetter
 {

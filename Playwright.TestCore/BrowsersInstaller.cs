@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Playwright;
 
-namespace Kontur.Playwright.TestCore;
+namespace SkbKontur.Playwright.TestCore;
 
 public class BrowsersInstaller
 {

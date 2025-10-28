@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Playwright;
 
-namespace Kontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore.Factories;
 
 public interface IPlaywrightFactory
 {

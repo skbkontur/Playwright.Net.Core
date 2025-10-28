@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Browsers;
-using Kontur.Playwright.TestCore.Configurations;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Browsers;
+using SkbKontur.Playwright.TestCore.Configurations;
 
-namespace Kontur.Playwright.TestCore.Pages;
+namespace SkbKontur.Playwright.TestCore.Pages;
 
 public class PageGetter(IBrowserGetter browserGetter, ITracingConfigurator tracingConfigurator)
     : IPageGetter, IAsyncDisposable

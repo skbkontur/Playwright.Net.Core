@@ -4,7 +4,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IncludeSymbols>false</IncludeSymbols>
         <PackageTags>library;dotnet;abstractions;wrapper;pom</PackageTags>
-        <AssemblyName>Kontur.POM.Abstractions</AssemblyName>
-        <RootNamespace>Kontur.POM.Abstractions</RootNamespace>
+        <AssemblyName>SkbKontur.POM.Abstractions</AssemblyName>
+        <RootNamespace>SkbKontur.POM.Abstractions</RootNamespace>
     </PropertyGroup>
 </Project>

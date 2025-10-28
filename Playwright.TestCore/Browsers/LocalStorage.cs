@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Pages;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Pages;
 
-namespace Kontur.Playwright.TestCore.Browsers;
+namespace SkbKontur.Playwright.TestCore.Browsers;
 
 public class LocalStorage(IPageGetter pageGetter) : ILocalStorage, IAsyncDisposable
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Kontur.Playwright.TestCore.Dependencies;
+namespace SkbKontur.Playwright.TestCore.Dependencies;
 
 public interface IDependenciesFactory
 {

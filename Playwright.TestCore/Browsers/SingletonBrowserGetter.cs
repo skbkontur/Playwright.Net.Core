@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Factories;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Factories;
 
-namespace Kontur.Playwright.TestCore.Browsers;
+namespace SkbKontur.Playwright.TestCore.Browsers;
 
 public class SingletonBrowserGetter(IBrowserFactory browserFactory) : IBrowserGetter, IAsyncDisposable
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Kontur.POM.Abstractions;
 using Microsoft.Playwright;
+using SkbKontur.POM.Abstractions;
 
-namespace Kontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore.Factories;
 
 public interface IPageFactory
 {

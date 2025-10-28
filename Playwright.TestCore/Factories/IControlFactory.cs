@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Collections;
-using Kontur.POM.Abstractions;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Collections;
+using SkbKontur.POM.Abstractions;
 
-namespace Kontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore.Factories;
 
 public interface IControlFactory
 {

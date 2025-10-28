@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 
-namespace Kontur.Playwright.TestCore.Dependencies;
+namespace SkbKontur.Playwright.TestCore.Dependencies;
 
 public class DefaultDependenciesFilter : IDependenciesFilter
 {

@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Factories;
-using Kontur.Playwright.TestCore.Pages;
-using Kontur.POM.Abstractions;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Factories;
+using SkbKontur.Playwright.TestCore.Pages;
+using SkbKontur.POM.Abstractions;
 
-namespace Kontur.Playwright.TestCore.Browsers;
+namespace SkbKontur.Playwright.TestCore.Browsers;
 
 public class Navigation(IPageGetter pageGetter, IPageObjectsFactory pageObjectsFactory)
 {

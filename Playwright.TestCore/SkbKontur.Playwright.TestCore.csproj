@@ -2,13 +2,13 @@
     <PropertyGroup>
         <Description>Инфраструктура для запуска тестов на Playwright</Description>
         <PackageTags>library;dotnet;playwright;testcore</PackageTags>
-        <AssemblyName>Kontur.Playwright.TestCore</AssemblyName>
-        <RootNamespace>Kontur.Playwright.TestCore</RootNamespace>
+        <AssemblyName>SkbKontur.Playwright.TestCore</AssemblyName>
+        <RootNamespace>SkbKontur.Playwright.TestCore</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Microsoft.Playwright" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\POM.Abstractions\Kontur.POM.Abstractions.csproj" />
+      <ProjectReference Include="..\POM.Abstractions\SkbKontur.POM.Abstractions.csproj" />
     </ItemGroup>
 </Project>

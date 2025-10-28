@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Kontur.Playwright.TestCore.Configurations;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Configurations;
 
-namespace Kontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore.Factories;
 
 public class PersistentFirefoxFactory(
     IPlaywrightFactory playwrightFactory,

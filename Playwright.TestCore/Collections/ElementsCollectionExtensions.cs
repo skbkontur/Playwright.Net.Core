@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Kontur.POM.Abstractions;
 using Microsoft.Playwright;
+using SkbKontur.POM.Abstractions;
 
-namespace Kontur.Playwright.TestCore.Collections;
+namespace SkbKontur.Playwright.TestCore.Collections;
 
 public static class ElementsCollectionExtensions
 {

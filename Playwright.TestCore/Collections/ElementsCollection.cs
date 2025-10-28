@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Kontur.Playwright.TestCore.Factories;
-using Kontur.POM.Abstractions;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Factories;
+using SkbKontur.POM.Abstractions;
 
-namespace Kontur.Playwright.TestCore.Collections;
+namespace SkbKontur.Playwright.TestCore.Collections;
 
 public class ElementsCollection<TItem>(ILocator elementLocator, IControlFactory controlFactory) : IEnumerable<TItem>, IWrapper<ILocator>
     where TItem : IWrapper<ILocator>

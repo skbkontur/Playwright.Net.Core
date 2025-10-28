@@ -1,4 +1,4 @@
-﻿namespace Kontur.POM.Abstractions;
+﻿namespace SkbKontur.POM.Abstractions;
 
 public interface IWrapper<out T>
 {

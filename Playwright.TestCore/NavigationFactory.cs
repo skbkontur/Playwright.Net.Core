@@ -1,10 +1,10 @@
-using Kontur.Playwright.TestCore.Browsers;
-using Kontur.Playwright.TestCore.Configurations;
-using Kontur.Playwright.TestCore.Dependencies;
-using Kontur.Playwright.TestCore.Factories;
-using Kontur.Playwright.TestCore.Pages;
+using SkbKontur.Playwright.TestCore.Browsers;
+using SkbKontur.Playwright.TestCore.Configurations;
+using SkbKontur.Playwright.TestCore.Dependencies;
+using SkbKontur.Playwright.TestCore.Factories;
+using SkbKontur.Playwright.TestCore.Pages;
 
-namespace Kontur.Playwright.TestCore;
+namespace SkbKontur.Playwright.TestCore;
 
 public static class NavigationFactory
 {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.Playwright;
 
-namespace Kontur.Playwright.TestCore.Configurations;
+namespace SkbKontur.Playwright.TestCore.Configurations;
 
 public class FixtureTracingConfigurator(ITestInfoGetter infoGetter) : ITracingConfigurator
 {
