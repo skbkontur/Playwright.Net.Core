@@ -1,7 +1,10 @@
 include:
   - project: $CI_CONFIG_PROJECT
     ref: $CI_CONFIG_BRANCH
-    file: 'templates/playwright-net.yml'
+    file: 'templates/playwright_net.yml'
+  - project: $CI_CONFIG_PROJECT
+    ref: $CI_CONFIG_BRANCH
+    file: 'templates/sync_to_github.yml'
 
 stages:
   - pack
@@ -11,7 +14,7 @@ stages:
 variables:
   POM_ABSTRACTIONS_VERSION: 0.0.1
   POM_PROJ: "SkbKontur.Playwright.POM.Abstractions"
-  POM_PW_TESTCORE_VERSION: 0.0.1
+  POM_PW_TESTCORE_VERSION: 0.0.2
   PW_CORE_PROJ: "SkbKontur.Playwright.TestCore"
 
 pack_pom_abstractions:

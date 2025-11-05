@@ -1,4 +1,4 @@
-﻿namespace SkbKontur.POM.Abstractions;
+﻿namespace SkbKontur.Playwright.POM.Abstractions;
 
 public interface IWrapper<out T>
 {

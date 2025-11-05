@@ -7,8 +7,6 @@
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Microsoft.Playwright" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\POM.Abstractions\SkbKontur.Playwright.POM.Abstractions.csproj" />
+      <PackageReference Include="SkbKontur.Playwright.POM.Abstractions" />
     </ItemGroup>
 </Project>
