@@ -25,7 +25,7 @@ pack_pom_abstractions:
 
 pack_pw_core:
   variables:
-    VERSION: ${PW_CORE_VERSION}
+    VERSION: ${POM_PW_TESTCORE_VERSION}
     PROJECT_DIR: "Playwright.TestCore"
     PROJECT_NAME: ${PW_CORE_PROJ}
   stage: pack
@@ -46,7 +46,7 @@ publish_pom_abstractions:
 publish_pw_core:
   variables:
     PROJECT_NAME: ${PW_CORE_PROJ}
-    VERSION: ${PW_CORE_VERSION}
+    VERSION: ${POM_PW_TESTCORE_VERSION}
     NUGET_ORG_API_KEY: ${NUGET_PW_API_KEY}
   stage: publish
   when: manual
