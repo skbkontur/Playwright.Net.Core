@@ -10,7 +10,7 @@ stages:
 
 variables:
   POM_ABSTRACTIONS_VERSION: 0.0.1
-  POM_PROJ: "SkbKontur.POM.Abstractions"
+  POM_PROJ: "SkbKontur.Playwright.POM.Abstractions"
   POM_PW_TESTCORE_VERSION: 0.0.1
   PW_CORE_PROJ: "SkbKontur.Playwright.TestCore"
 
