@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
-using SkbKontur.POM.Abstractions;
+using SkbKontur.Playwright.POM.Abstractions;
 
 namespace SkbKontur.Playwright.TestCore.Collections;
 

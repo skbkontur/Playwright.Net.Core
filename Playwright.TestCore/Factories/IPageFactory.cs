@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
-using SkbKontur.POM.Abstractions;
+using SkbKontur.Playwright.POM.Abstractions;
+
 
 namespace SkbKontur.Playwright.TestCore.Factories;
 

@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.POM.Abstractions;
 using SkbKontur.Playwright.TestCore.Factories;
-using SkbKontur.POM.Abstractions;
+
 
 namespace SkbKontur.Playwright.TestCore.Collections;
 
-public class ElementsCollection<TItem>(ILocator elementLocator, IControlFactory controlFactory) : IEnumerable<TItem>, IWrapper<ILocator>
+public class ElementsCollection<TItem>(ILocator elementLocator, IControlFactory controlFactory)
+    : IEnumerable<TItem>, IWrapper<ILocator>
     where TItem : IWrapper<ILocator>
 {
     public ILocator WrappedItem { get; } = elementLocator;
@@ -39,7 +41,7 @@ public class ElementsCollection<TItem>(ILocator elementLocator, IControlFactory 
 
     public ILocatorAssertions Expect()
         => Assertions.Expect(WrappedItem);
-    
+
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 

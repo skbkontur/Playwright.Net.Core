@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.POM.Abstractions;
 using SkbKontur.Playwright.TestCore.Factories;
 using SkbKontur.Playwright.TestCore.Pages;
-using SkbKontur.POM.Abstractions;
 
 namespace SkbKontur.Playwright.TestCore.Browsers;
 

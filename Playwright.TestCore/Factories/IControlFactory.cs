@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.POM.Abstractions;
 using SkbKontur.Playwright.TestCore.Collections;
-using SkbKontur.POM.Abstractions;
+
 
 namespace SkbKontur.Playwright.TestCore.Factories;
 
