@@ -42,6 +42,8 @@ publish_pom_abstractions:
   extends: [ .package_version, .dotnet_nuget_publish ]
   dependencies:
     - pack_pom_abstractions
+  needs: 
+    - pack_pom_abstractions
 
 publish_pw_core:
   variables:
@@ -52,4 +54,6 @@ publish_pw_core:
   when: manual
   extends: [ .package_version, .dotnet_nuget_publish ]
   dependencies:
+    - pack_pw_core  
+  needs:
     - pack_pw_core
