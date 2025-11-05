@@ -7,5 +7,5 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="Playwright.TestCore\SkbKontur.Playwright.TestCore.csproj" Type="Classic C#" />
-  <Project Path="POM.Abstractions\SkbKontur.POM.Abstractions.csproj" />
+  <Project Path="POM.Abstractions\SkbKontur.Playwright.POM.Abstractions.csproj" />
 </Solution>
