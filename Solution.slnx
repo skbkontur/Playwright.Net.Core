@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/configs/">
+    <File Path=".gitignore" />
+    <File Path=".gitlab-ci.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="POM.Abstractions\Kontur.POM.Abstractions.csproj" />
+</Solution>

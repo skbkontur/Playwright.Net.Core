@@ -2,3 +2,38 @@ include:
   - project: $CI_CONFIG_PROJECT
     ref: $CI_CONFIG_BRANCH
     file: 'templates/playwright-net.yml'
+
+stages:
+  - pack
+  - publish
+  - deploy
+    
+pack_pom_abstractions:
+  variables:
+    PROJECT_DIR: "POM.Abstractions"
+    PROJECT_NAME: "Kontur.POM.Abstractions"
+  stage: pack
+  extends: [.package_version, .dotnet_pack]
+  when: manual
+  
+pack_pw_core:
+  variables:
+    PROJECT_DIR: "Playwright.TestCore"
+    PROJECT_NAME: "Kontur.Playwright.TestCore"
+  stage: pack
+  extends: [.package_version, .dotnet_pack]
+  when: manual
+  
+publish_pom_abstractions:
+  stage: publish
+  when: manual
+  extends: [.package_version, .dotnet_nuget_publish]
+  dependencies:
+    - pack_pom_abstractions
+
+publish_pw_core:
+  stage: publish
+  when: manual
+  extends: [.package_version, .dotnet_nuget_publish]
+  dependencies:
+    - pack_pw_core
