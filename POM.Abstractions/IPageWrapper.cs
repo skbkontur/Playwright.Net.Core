@@ -1,4 +1,4 @@
-﻿namespace Kontur.POM.Abstractions;
+﻿namespace SkbKontur.Playwright.POM.Abstractions;
 
 public interface IPageWrapper<out TPage> : IWrapper<TPage>
 {
