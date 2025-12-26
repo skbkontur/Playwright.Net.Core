@@ -11,7 +11,7 @@ stages:
   - deploy
 
 variables:
-  POM_ABSTRACTIONS_VERSION: 0.0.3
+  POM_ABSTRACTIONS_VERSION: 1.0.0
   POM_DIR: "POM.Abstractions"
   POM_PROJ: "SkbKontur.Playwright.POM.Abstractions"
   POM_PW_TESTCORE_VERSION: 0.0.3
