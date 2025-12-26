@@ -7,56 +7,64 @@ include:
     file: 'templates/sync_to_github.yml'
 
 stages:
-  - pack
-  - publish
+  - build
   - deploy
 
 variables:
-  POM_ABSTRACTIONS_VERSION: 0.0.1
+  POM_ABSTRACTIONS_VERSION: 0.0.3
+  POM_DIR: "POM.Abstractions"
   POM_PROJ: "SkbKontur.Playwright.POM.Abstractions"
-  POM_PW_TESTCORE_VERSION: 0.0.2
+  POM_PW_TESTCORE_VERSION: 0.0.3
+  PW_CORE_DIR: "Playwright.TestCore"
   PW_CORE_PROJ: "SkbKontur.Playwright.TestCore"
 
-pack_pom_abstractions:
+build_pom_abstractions:
   variables:
     VERSION: ${POM_ABSTRACTIONS_VERSION}
-    PROJECT_DIR: "POM.Abstractions"
+    PROJECT_DIR: ${POM_DIR}
     PROJECT_NAME: ${POM_PROJ}
-  stage: pack
-  extends: [ .package_version, .dotnet_pack ]
+  stage: build
+  extends: [ .package_version, .dotnet_build ]
   when: manual
 
-pack_pw_core:
+build_pw_core:
   variables:
     VERSION: ${POM_PW_TESTCORE_VERSION}
-    PROJECT_DIR: "Playwright.TestCore"
+    PROJECT_DIR: ${PW_CORE_DIR}
     PROJECT_NAME: ${PW_CORE_PROJ}
-  stage: pack
-  extends: [ .package_version, .dotnet_pack ]
+  stage: build
+  extends: [ .package_version, .dotnet_build ]
   when: manual
 
 publish_pom_abstractions:
   variables:
+    PROJECT_DIR: ${POM_DIR}
     PROJECT_NAME: ${POM_PROJ}
     VERSION: ${POM_ABSTRACTIONS_VERSION}
     NUGET_ORG_API_KEY: ${NUGET_PW_API_KEY}
-  stage: publish
+  stage: deploy
   when: manual
   extends: [ .package_version, .dotnet_nuget_publish ]
   dependencies:
-    - pack_pom_abstractions
+    - build_pom_abstractions
   needs: 
-    - pack_pom_abstractions
+    - build_pom_abstractions
 
 publish_pw_core:
   variables:
+    PROJECT_DIR: ${PW_CORE_DIR}
     PROJECT_NAME: ${PW_CORE_PROJ}
     VERSION: ${POM_PW_TESTCORE_VERSION}
     NUGET_ORG_API_KEY: ${NUGET_PW_API_KEY}
-  stage: publish
+  stage: deploy
   when: manual
   extends: [ .package_version, .dotnet_nuget_publish ]
   dependencies:
-    - pack_pw_core  
+    - build_pw_core  
   needs:
-    - pack_pw_core
+    - build_pw_core
+
+sync_github:
+  stage: deploy
+  when: manual
+  extends: [ .sync_to_github ]
