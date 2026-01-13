@@ -25,7 +25,15 @@ build_pom_abstractions:
     PROJECT_NAME: ${POM_PROJ}
   stage: build
   extends: [ .package_version, .dotnet_build ]
-  when: manual
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ${POM_DIR}/**/*
+      when: on_success
+    - changes:
+        - ${POM_DIR}/**/*
+      when: manual
+    - when: never
 
 build_pw_core:
   variables:
@@ -34,7 +42,15 @@ build_pw_core:
     PROJECT_NAME: ${PW_CORE_PROJ}
   stage: build
   extends: [ .package_version, .dotnet_build ]
-  when: manual
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ${PW_CORE_DIR}/**/*
+      when: on_success
+    - changes:
+        - ${PW_CORE_DIR}/**/*
+      when: manual
+    - when: never
 
 publish_pom_abstractions:
   variables:
@@ -43,12 +59,16 @@ publish_pom_abstractions:
     VERSION: ${POM_VERSION}
     NUGET_ORG_API_KEY: ${NUGET_PW_API_KEY}
   stage: deploy
-  when: manual
   extends: [ .package_version, .dotnet_nuget_publish ]
   dependencies:
     - build_pom_abstractions
   needs: 
     - build_pom_abstractions
+  rules:
+    - changes:
+        - ${POM_DIR}/**/*
+      when: manual
+    - when: never
 
 publish_pw_core:
   variables:
@@ -63,6 +83,39 @@ publish_pw_core:
     - build_pw_core  
   needs:
     - build_pw_core
+  rules:
+    - changes:
+        - ${PW_CORE_DIR}/**/*
+      when: manual
+    - when: never
+
+set_tag_pom_version:
+  variables:
+    PROJECT_NAME: ${POM_PROJ}
+    PACKAGE_VERSION: ${POM_VERSION}
+  extends: [.tag_version]
+  stage: deploy
+  needs:
+    - publish_pom_abstractions
+  rules: 
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ${POM_DIR}/**/*
+    - when: never
+  
+set_tag_PW_core_version:
+  variables:
+    PROJECT_NAME: ${PW_CORE_PROJ}
+    PACKAGE_VERSION: ${PW_CORE_VERSION}
+  extends: [.tag_version]
+  stage: deploy
+  needs:
+    - publish_pw_core
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ${PW_CORE_DIR}/**/*
+    - when: never
 
 set_tag_pom_version:
   variables:
