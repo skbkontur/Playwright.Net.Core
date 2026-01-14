@@ -117,22 +117,6 @@ set_tag_PW_core_version:
         - ${PW_CORE_DIR}/**/*
     - when: never
 
-set_tag_pom_version:
-  variables:
-    PROJECT_NAME: ${POM_PROJ}
-    PACKAGE_VERSION: ${POM_VERSION}
-  extends: [.tag_version]
-  stage: deploy
-  when: manual
-  
-set_tag_PW_core_version:
-  variables:
-    PROJECT_NAME: ${PW_CORE_PROJ}
-    PACKAGE_VERSION: ${PW_CORE_VERSION}
-  extends: [.tag_version]
-  stage: deploy
-  when: manual
-
 sync_github:
   stage: deploy
   when: manual
