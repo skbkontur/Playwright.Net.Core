@@ -5,7 +5,7 @@ using SkbKontur.Playwright.TestCore.Pages;
 
 namespace SkbKontur.Playwright.TestCore.Browsers;
 
-public class LocalStorage(IPageGetter pageGetter) : ILocalStorage, IAsyncDisposable
+public class LocalStorage(IPageGetter pageGetter) : ILocalStorage, IAsyncDisposable, IDisposable
 {
     private readonly Lazy<Task<IPage>> _page = new(pageGetter.GetAsync);
 
@@ -29,4 +29,7 @@ public class LocalStorage(IPageGetter pageGetter) : ILocalStorage, IAsyncDisposa
 
     public ValueTask DisposeAsync() 
         => new ValueTask(ClearAsync());
+
+    public void Dispose()
+        => DisposeAsync().GetAwaiter().GetResult();
 }
