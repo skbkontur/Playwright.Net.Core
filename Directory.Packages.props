@@ -3,7 +3,11 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.55.0" />
-    <PackageVersion Include="SkbKontur.Playwright.POM.Abstractions" Version="0.0.1-beta7e54c75f" />
+    <PackageVersion Include="NUnit" Version="4.4.0" />
+    <PackageVersion Include="SkbKontur.Playwright.POM.Abstractions" Version="1.0.0" />
   </ItemGroup>
 </Project>

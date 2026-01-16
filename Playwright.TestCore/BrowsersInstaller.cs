@@ -8,7 +8,7 @@ public class BrowsersInstaller
 {
     public void Install(params string[] browsers)
     {
-        List<string> installArgs = ["install", "--with-deps"];
+        List<string> installArgs = ["install"];
         installArgs.AddRange(browsers);
         var exitCode = Program.Main(installArgs.ToArray());
         if (exitCode != 0)

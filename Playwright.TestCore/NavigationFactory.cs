@@ -1,3 +1,4 @@
+using SkbKontur.Playwright.TestCore.Auth;
 using SkbKontur.Playwright.TestCore.Browsers;
 using SkbKontur.Playwright.TestCore.Configurations;
 using SkbKontur.Playwright.TestCore.Dependencies;
@@ -14,11 +15,14 @@ public static class NavigationFactory
     )
         => new Navigation(
             new PageGetter(new DefaultBrowserGetter(
-                    new ChromeFactory(
-                        new PlaywrightFactory<DefaultPlaywrightConfiguration>(),
-                        new HeadlessConfigurator()
-                    )),
-                new DefaultTracingConfigurator(testInfoGetter)),
+                new ChromeFactory(
+                    new PlaywrightFactory<DefaultPlaywrightConfiguration>(),
+                    new HeadlessConfigurator(),
+                    new WithoutAuthStrategy()
+                    ),
+                new ContextTracing(
+                    new DefaultTracingConfigurator(testInfoGetter))
+            )),
             new PageObjectsFactory(dependenciesFactory)
         );
 }
