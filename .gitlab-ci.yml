@@ -14,7 +14,7 @@ variables:
   POM_VERSION: 1.0.0
   POM_DIR: "POM.Abstractions"
   POM_PROJ: "SkbKontur.Playwright.POM.Abstractions"
-  PW_CORE_VERSION: 0.0.3
+  PW_CORE_VERSION: 0.0.4
   PW_CORE_DIR: "Playwright.TestCore"
   PW_CORE_PROJ: "SkbKontur.Playwright.TestCore"
 
