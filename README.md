@@ -128,24 +128,44 @@
 
 #### 8. Navigation и инфраструктура
 
-**NavigationFactory**
-- Статическая фабрика для создания Navigation с предустановленными зависимостями
+**ServiceCollectionExtensions**
+- Расширения для IServiceCollection для регистрации компонентов в DI контейнере
+- Предоставляет AddPlaywrightTestCore<TTestInfoGetter> для полной настройки
 
 **BrowsersInstaller**
 - Устанавливает браузеры Playwright перед запуском тестов
 
-### Тестовый проект (Tests)
+### Пример тестового проекта
 
 **ServiceCollectionExtensions.UsePlaywright()**
-- Расширения для регистрации всех компонентов TestCore в DI контейнере
-- Настраивает scoped и singleton сервисы
+- Расширения для регистрации всех компонентов TestCore в DI контейнере с поддержкой NUnit
+- Включает TestInfoGetter для получения информации о тестах из NUnit TestContext
 
-**DependencyFactory, TestInfoGetter**
-- Адаптеры для интеграции с NUnit и Microsoft.Extensions.DependencyInjection
+**TestInfoGetter**
+- Адаптер для получения метаданных тестов из NUnit TestContext
 
 **RunPwShould**
-- Базовый тестовый класс демонстрирующий использование инфраструктуры
+- Стандартный тестовый класс демонстрирующий использование инфраструктуры
 - Показывает работу с Navigation, локаторами и assertions
+
+### Регистрация в DI контейнере
+
+**Регистрация с NUnit:**
+```csharp
+services.AddPlaywrightTestCore<TestInfoGetter>(); // Полная настройка с TestInfoGetter
+```
+
+**Простая регистрация:**
+```csharp
+services.UsePlaywright(); // Удобный метод для NUnit проектов
+```
+
+**Расширенная конфигурация:**
+```csharp
+services.AddPlaywrightTestCore<CustomTestInfoGetter>()
+        .AddScoped<IBrowserConfigurator, CustomBrowserConfigurator>() // Своя конфигурация браузера
+        .AddScoped<IAuthStrategy, CustomAuthStrategy>(); // Своя стратегия аутентификации
+```
 
 ### Ключевые особенности архитектуры:
 
@@ -153,9 +173,11 @@
 2. **Lazy loading** - тяжёлые объекты (Playwright, браузеры) создаются по требованию
 3. **Thread safety** - стратегии аутентификации защищены от конкурентного доступа
 4. **Расширяемость** - интерфейсы позволяют легко заменять реализации
-5. **Интеграция с Playwright** - полная поддержка всех возможностей Playwright
-6. **POM паттерн** - поддержка создания типизированных page objects
-7. **Tracing и отладка** - встроенная поддержка трассировки для debugging
-8. **CI/CD готовность** - автоматическое определение headless режима
+5. **Гибкая конфигурация DI** - единый метод AddPlaywrightTestCore<TTestInfoGetter> для полной настройки
+6. **Интеграция с Playwright** - полная поддержка всех возможностей Playwright
+7. **POM паттерн** - поддержка создания типизированных page objects
+8. **Tracing и отладка** - встроенная поддержка трассировки для debugging
+9. **CI/CD готовность** - автоматическое определение headless режима
+10. **Фреймворк-агностичность** - поддержка разных фреймворков тестирования через generic параметр
 
 Эта инфраструктура предоставляет полноценное решение для E2E тестирования веб-приложений с Playwright, следуя современным принципам архитектуры и обеспечивая высокую поддерживаемость и расширяемость кода тестов.

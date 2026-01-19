@@ -1,22 +1,21 @@
+using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using SkbKontur.Playwright.TestCore.Dependencies;
 
-namespace Tests.Infra;
+namespace SkbKontur.Playwright.TestCore.Dependencies;
 
 /// <summary>
 /// Фабрика зависимостей для интеграции с Microsoft.Extensions.DependencyInjection.
 /// Создаёт зависимости для конструкторов page objects через DI контейнер.
 /// </summary>
-/// <param name="serviceProvider">Провайдер сервисов для разрешения зависимостей</param>
-/// <param name="filter">Фильтр для определения, какие параметры разрешать через DI</param>
 public class DependencyFactory(
     IServiceProvider serviceProvider,
     IDependenciesFilter filter)
     : IDependenciesFactory
 {
     /// <summary>
-    /// Создать массив зависимостей для указанного типа элемента управления.
+    /// Создать массив зависимостей для указанного типа контрола.
     /// Использует DI контейнер для разрешения зависимостей.
     /// </summary>
     /// <param name="controlType">Тип контрола, для которого создаются зависимости</param>
