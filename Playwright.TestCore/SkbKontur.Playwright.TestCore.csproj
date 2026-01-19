@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Инфраструктура для запуска тестов на Playwright</Description>
         <PackageTags>library;dotnet;playwright;testcore</PackageTags>
@@ -8,5 +8,6 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.Playwright" />
       <PackageReference Include="SkbKontur.Playwright.POM.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 </Project>
