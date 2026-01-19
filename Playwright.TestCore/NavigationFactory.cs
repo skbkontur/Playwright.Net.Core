@@ -7,8 +7,19 @@ using SkbKontur.Playwright.TestCore.Pages;
 
 namespace SkbKontur.Playwright.TestCore;
 
+/// <summary>
+/// Фабрика для создания объектов Navigation с предустановленными зависимостями.
+/// Создаёт готовую к использованию инфраструктуру тестирования.
+/// </summary>
 public static class NavigationFactory
 {
+    /// <summary>
+    /// Создать объект Navigation с предустановленными зависимостями.
+    /// Использует Chrome браузер, стандартную конфигурацию и стратегию без аутентификации.
+    /// </summary>
+    /// <param name="dependenciesFactory">Фабрика зависимостей для создания page objects</param>
+    /// <param name="testInfoGetter">Провайдер информации о текущем тесте</param>
+    /// <returns>Настроенный объект Navigation</returns>
     public static Navigation Create(
         IDependenciesFactory dependenciesFactory,
         ITestInfoGetter testInfoGetter

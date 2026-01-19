@@ -8,8 +8,18 @@ using SkbKontur.Playwright.TestCore.Pages;
 
 namespace Tests.Infra;
 
+/// <summary>
+/// Расширения для IServiceCollection для интеграции Playwright TestCore.
+/// Предоставляет метод для регистрации всех необходимых компонентов в DI контейнере.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Зарегистрировать все компоненты Playwright TestCore в DI контейнере.
+    /// Настраивает singleton и scoped сервисы для работы с Playwright.
+    /// </summary>
+    /// <param name="sc">Коллекция сервисов для расширения</param>
+    /// <returns>Расширенная коллекция сервисов</returns>
     public static IServiceCollection UsePlaywright(this IServiceCollection sc)
     {
         sc.AddSingleton<IPlaywrightFactory, PlaywrightFactory<DefaultPlaywrightConfiguration>>();
