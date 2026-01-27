@@ -6,8 +6,8 @@ namespace SkbKontur.Playwright.TestCore.Auth;
 /// Стратегия аутентификации с кэшированием состояния.
 /// Выполняет аутентификацию один раз и кэширует результат для повторного использования.
 /// </summary>
-/// <param name="autentificator">Аутентификатор для выполнения процесса аутентификации</param>
-public class AuthWithCacheStrategy(IAutentificator autentificator) : IAuthStrategy
+/// <param name="authenticator">Аутентификатор для выполнения процесса аутентификации</param>
+public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy
 {
     /// <summary>
     /// Объект для синхронизации доступа к кэшу состояния.
@@ -50,7 +50,7 @@ public class AuthWithCacheStrategy(IAutentificator autentificator) : IAuthStrate
         {
             if (!isInitialized)
             {
-                _cachedStorageState ??= autentificator.CreateStorageStateAsync().GetAwaiter().GetResult();
+                _cachedStorageState ??= authenticator.CreateStorageStateAsync().GetAwaiter().GetResult();
                 isInitialized = true;
             }
         }

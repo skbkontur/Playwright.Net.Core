@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection UsePlaywright(this IServiceCollection sc)
     {
         sc.AddPlaywrightTestCore<TestInfoGetter>();
+        sc.UsePom();
         return sc;
     }
 }

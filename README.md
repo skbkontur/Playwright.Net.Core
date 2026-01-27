@@ -2,19 +2,23 @@
 
 ### SkbKontur.Playwright.POM.Abstractions
 
-**Цель:** Базовые абстракции для реализации паттерна Page Object Model (POM) с использованием паттерна обёртки (Wrapper pattern).
+**Цель:** Базовые абстракции для реализации паттерна Page Object Model (POM) с использованием паттерна обёртки (Wrapper).
+Позволяет интегрировать слой POMa вашей инфраструктуры с SkbKontur.Playwright.TestCore.
 
 **Компоненты:**
 
 1. **IWrapper<T>** - Базовый интерфейс обёрточного паттерна
    - Предоставляет доступ к обёрнутому объекту через свойство `WrappedItem`
 
-2. **ILocatorWrapper<TLocator>** - Интерфейс для обёрток Playwright локаторов
+2. **ILocatorWrapper<TLocator>** - Интерфейс для PageElements - обёрток Playwright локаторов
    - Наследуется от `IWrapper<TLocator>` где `TLocator` - тип локатора Playwright
 
-3. **IPageWrapper<TPage>** - Интерфейс для обёрток страниц Playwright
+3. **IPageWrapper<TPage>** - Интерфейс для PageObjects - обёрток страниц Playwright
    - Наследуется от `IWrapper<TPage>` где `TPage` - тип страницы Playwright
    - Дополнительно предоставляет свойство `Url` для получения URL страницы
+
+4. **IPageFactory<in TWrappedItem>** - Интерфейс предоставляет единый механизм создания страниц (PageObjects)
+5. **IControlFactory<in TWrappedItem>** - Интерфейс предоставляет единый механизм создания контролов (PageElements) с различными стратегиями
 
 ### SkbKontur.Playwright.TestCore
 
@@ -152,17 +156,18 @@
 
 **Регистрация с NUnit:**
 ```csharp
-services.AddPlaywrightTestCore<TestInfoGetter>(); // Полная настройка с TestInfoGetter
+services.AddPlaywrightTestCore<TestInfoGetter>(); // настройка с TestInfoGetter без POM
 ```
 
 **Простая регистрация:**
 ```csharp
-services.UsePlaywright(); // Удобный метод для NUnit проектов
+services.AddPlaywrightTestCore<TestInfoGetter>().UsePom();
 ```
 
 **Расширенная конфигурация:**
 ```csharp
 services.AddPlaywrightTestCore<CustomTestInfoGetter>()
+        .UsePom()
         .AddScoped<IBrowserConfigurator, CustomBrowserConfigurator>() // Своя конфигурация браузера
         .AddScoped<IAuthStrategy, CustomAuthStrategy>(); // Своя стратегия аутентификации
 ```
@@ -173,9 +178,9 @@ services.AddPlaywrightTestCore<CustomTestInfoGetter>()
 2. **Lazy loading** - тяжёлые объекты (Playwright, браузеры) создаются по требованию
 3. **Thread safety** - стратегии аутентификации защищены от конкурентного доступа
 4. **Расширяемость** - интерфейсы позволяют легко заменять реализации
-5. **Гибкая конфигурация DI** - единый метод AddPlaywrightTestCore<TTestInfoGetter> для полной настройки
+5. **Гибкая конфигурация DI** - методы `AddPlaywrightTestCore<TTestInfoGetter>` и `UsePom` для полной настройки
 6. **Интеграция с Playwright** - полная поддержка всех возможностей Playwright
-7. **POM паттерн** - поддержка создания типизированных page objects
+7. **POM паттерн** - поддержка создания типизированных page objects и page elements
 8. **Tracing и отладка** - встроенная поддержка трассировки для debugging
 9. **CI/CD готовность** - автоматическое определение headless режима
 10. **Фреймворк-агностичность** - поддержка разных фреймворков тестирования через generic параметр

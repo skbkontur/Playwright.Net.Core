@@ -6,7 +6,7 @@ namespace SkbKontur.Playwright.TestCore.Auth;
 /// Интерфейс аутентификатора.
 /// Отвечает за процесс аутентификации и сохранение состояния.
 /// </summary>
-public interface IAutentificator
+public interface IAuthenticator
 {
     /// <summary>
     /// Создать состояние браузера после выполнения аутентификации.

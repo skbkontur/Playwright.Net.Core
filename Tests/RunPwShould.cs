@@ -2,8 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using NUnit.Framework;
 using SkbKontur.Playwright.TestCore;
-using SkbKontur.Playwright.TestCore.Browsers;
+using SkbKontur.Playwright.TestCore.Pages;
 using Tests.Infra;
+using Tests.POM.Pages;
 
 namespace Tests;
 
@@ -71,5 +72,38 @@ public class RunPwShould
         var page = await navigation.GoToUrlAsync(url);
         var logo = page.Locator(".kontur-logo_main");
         await Assertions.Expect(logo).ToContainClassAsync("kontur-logo");
+    }
+    
+    /// <summary>
+    /// Тест успешного выполнения с использованием обычного scope.
+    /// Проверяет загрузку главной страницы kontur.ru и наличие заголовка.
+    /// </summary>
+    [Test]
+    public async Task BeSuccess_FromScope_WithPom()
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var navigation = services.GetRequiredService<Navigation>();
+        var page = await navigation.GoToPageAsync<KonturPage>();
+        await page.EcosystemHeader.Expect().ToContainTextAsync("для бизнеса");
+    }
+
+    /// <summary>
+    /// Тест успешного выполнения с использованием async scope.
+    /// Проверяет загрузку различных страниц kontur.ru и наличие логотипа.
+    /// </summary>
+    /// <param name="url">URL страницы для тестирования</param>
+    [Test]
+    public async Task BeSuccess_FromAsyncScope_WithPom([Values(
+            "",
+            "products/docs",
+            "products/reporting")]
+        string additionalPath)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var services = scope.ServiceProvider;
+        var navigation = services.GetRequiredService<Navigation>();
+        var page = await navigation.GoToPageAsync<KonturPage>(additionalPath);
+        await page.Logo.Expect().ToContainClassAsync("kontur-logo");
     }
 }
