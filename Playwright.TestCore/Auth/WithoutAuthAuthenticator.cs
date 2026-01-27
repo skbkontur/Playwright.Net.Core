@@ -6,7 +6,7 @@ namespace SkbKontur.Playwright.TestCore.Auth;
 /// Аутентификатор без выполнения аутентификации.
 /// Используется для сценариев, где аутентификация не требуется.
 /// </summary>
-public class WithoutAuthAutentificator : IAutentificator
+public class WithoutAuthAuthenticator : IAuthenticator
 {
     /// <summary>
     /// Не выполняет никакой аутентификации.

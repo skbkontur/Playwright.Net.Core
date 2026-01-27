@@ -14,16 +14,16 @@ namespace SkbKontur.Playwright.TestCore.Collections;
 /// Предоставляет LINQ-подобный интерфейс для работы с коллекциями элементов.
 /// </summary>
 /// <typeparam name="TItem">Тип обёртки элемента управления</typeparam>
-/// <param name="elementLocator">Локатор базовых элементов коллекции</param>
+/// <param name="locator">Локатор базовых элементов коллекции</param>
 /// <param name="controlFactory">Фабрика для создания обёрток элементов управления</param>
-public class ElementsCollection<TItem>(ILocator elementLocator, IControlFactory controlFactory)
-    : IEnumerable<TItem>, IWrapper<ILocator>
-    where TItem : IWrapper<ILocator>
+public class ElementsCollection<TItem>(ILocator locator, IControlFactory controlFactory)
+    : IEnumerable<TItem>, ILocatorWrapper<ILocator>
+    where TItem : ILocatorWrapper<ILocator>
 {
     /// <summary>
     /// Обёрнутый локатор базовых элементов коллекции.
     /// </summary>
-    public ILocator WrappedItem { get; } = elementLocator;
+    public ILocator WrappedItem { get; } = locator;
 
     /// <summary>
     /// Отфильтровать коллекцию элементов по заданным критериям.

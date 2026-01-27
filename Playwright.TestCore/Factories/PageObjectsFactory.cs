@@ -14,46 +14,48 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 public class PageObjectsFactory(IDependenciesFactory dependenciesFactory)
     : IControlFactory, IPageFactory, IPageObjectsFactory
 {
-    public TControl Create<TControl>(ILocator locator)
-        where TControl : IWrapper<ILocator>
-    {
-        return Create<TControl>(() => locator);
-    }
-
-    public TControl Create<TControl>(Func<ILocator> locator)
-        where TControl : IWrapper<ILocator>
+    public TControl Create<TControl>(Func<ILocator> getLocator)
+        where TControl : ILocatorWrapper<ILocator>
     {
         var dependency = dependenciesFactory.CreateDependency(typeof(TControl));
-        return (TControl)Activator.CreateInstance(typeof(TControl), new[] { locator() }.Concat(dependency).ToArray())!;
+        var locator = getLocator();
+        return (TControl)Activator.CreateInstance(typeof(TControl), new[] { locator }.Concat(dependency).ToArray())!;
     }
 
-    public TControl Create<TControl>(IPage page, string dataTid)
-        where TControl : IWrapper<ILocator>
-    {
-        return Create<TControl>(() => page.GetByTestId(dataTid));
-    }
+    public IPageFactory PageFactory => this;
+    public IControlFactory ControlFactory => this;
 
-    public TControl Create<TControl>(ILocator locator, string dataTid)
-        where TControl : IWrapper<ILocator>
-    {
-        return Create<TControl>(() => locator.GetByTestId(dataTid));
-    }
+    public TControl Create<TControl>(ILocator locator)
+        where TControl : ILocatorWrapper<ILocator>
+        => Create<TControl>(() => locator);
+
+    public TControl Create<TControl>(ILocatorWrapper<ILocator> locatorWrapper, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => Create<TControl>(locatorWrapper.WrappedItem, dataTestId);
+
+    public TControl Create<TControl>(ILocator locator, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => Create<TControl>(() => locator.GetByTestId(dataTestId));
+
+    public TControl Create<TControl>(IPage page, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => Create<TControl>(() => page.GetByTestId(dataTestId));    
+    
+    public TControl Create<TControl>(IPageWrapper<IPage> page, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => Create<TControl>(() => page.WrappedItem.GetByTestId(dataTestId));
 
     public Task<IReadOnlyCollection<TControl>> CreateCollectionAsync<TControl>(ILocator locator, string dataTid)
-        where TControl : IWrapper<ILocator>
-    {
-        return CreateCollectionAsync<TControl>(async () => await locator.GetByTestId(dataTid).AllAsync());
-    }
+        where TControl : ILocatorWrapper<ILocator>
+        => CreateCollectionAsync<TControl>(async () => await locator.GetByTestId(dataTid).AllAsync());
 
     public Task<IReadOnlyCollection<TControl>> CreateCollectionAsync<TControl>(Func<ILocator> locator)
-        where TControl : IWrapper<ILocator>
-    {
-        return CreateCollectionAsync<TControl>(async () => await locator().AllAsync());
-    }
+        where TControl : ILocatorWrapper<ILocator>
+        => CreateCollectionAsync<TControl>(async () => await locator().AllAsync());
 
     public async Task<IReadOnlyCollection<TControl>> CreateCollectionAsync<TControl>(
         Func<Task<IEnumerable<ILocator>>> locator)
-        where TControl : IWrapper<ILocator>
+        where TControl : ILocatorWrapper<ILocator>
     {
         var controls = await locator();
         return new ReadOnlyCollection<TControl>(
@@ -62,55 +64,46 @@ public class PageObjectsFactory(IDependenciesFactory dependenciesFactory)
                 .ToList());
     }
 
-    public ElementsCollection<TControl> CreateElementsCollection<TControl>(ILocator locator, string elementDataTid)
-        where TControl : IWrapper<ILocator> =>
-        CreateElementsCollection<TControl>(locator.GetByTestId(elementDataTid));
+    public ElementsCollection<TControl> CreateElementsCollection<TControl>(ILocator locator, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => CreateElementsCollection<TControl>(locator.GetByTestId(dataTestId));
 
-    public ElementsCollection<TControl> CreateElementsCollection<TControl>(IWrapper<ILocator> locator,
-        string elementDataTid) where TControl : IWrapper<ILocator> =>
-        CreateElementsCollection<TControl>(locator.WrappedItem.GetByTestId(elementDataTid));
+    public ElementsCollection<TControl> CreateElementsCollection<TControl>(IWrapper<ILocator> locator, string dataTestId) 
+        where TControl : ILocatorWrapper<ILocator>
+        => CreateElementsCollection<TControl>(locator.WrappedItem.GetByTestId(dataTestId));
 
-    public ElementsCollection<TControl> CreateElementsCollection<TControl>(IWrapper<IPage> page, string elementDataTid)
-        where TControl : IWrapper<ILocator> =>
-        CreateElementsCollection<TControl>( page.WrappedItem.GetByTestId(elementDataTid));
+    public ElementsCollection<TControl> CreateElementsCollection<TControl>(IWrapper<IPage> page, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => CreateElementsCollection<TControl>(page.WrappedItem.GetByTestId(dataTestId));
 
-    public ElementsCollection<TControl> CreateElementsCollection<TControl>(IPage page, string elementDataTid)
-        where TControl : IWrapper<ILocator> =>
-        CreateElementsCollection<TControl>(page.GetByTestId(elementDataTid));
+    public ElementsCollection<TControl> CreateElementsCollection<TControl>(IPage page, string dataTestId)
+        where TControl : ILocatorWrapper<ILocator>
+        => CreateElementsCollection<TControl>(page.GetByTestId(dataTestId));
 
-    public ElementsCollection<TControl> CreateElementsCollection<TControl>(
-        ILocator ElementLocator)
-        where TControl : IWrapper<ILocator>
+    public ElementsCollection<TControl> CreateElementsCollection<TControl>(ILocator locator)
+        where TControl : ILocatorWrapper<ILocator>
+        => Create<ElementsCollection<TControl>>(locator);
+
+    public TPage Create<TPage>(Func<IPage> getPage)
+        where TPage : IPageWrapper<IPage>
     {
-        var dependency = dependenciesFactory.CreateDependency(typeof(ElementsCollection<TControl>));
-        return (ElementsCollection<TControl>)Activator.CreateInstance(
-            typeof(ElementsCollection<TControl>),
-            new object[] { ElementLocator }.Concat(dependency).ToArray()
-        )!;
-    }
-
-    public TPage Create<TPage>(IPage page)
-        where TPage : IWrapper<IPage>
-    {
+        var page = getPage();
         var dependency = dependenciesFactory.CreateDependency(typeof(TPage));
         return (TPage)Activator.CreateInstance(typeof(TPage), new[] { page }.Concat(dependency).ToArray())!;
     }
 
-    public TPage Create<TPage>(IWrapper<ILocator> wrapper)
-        where TPage : IWrapper<IPage> =>
-        Create<TPage>(wrapper.WrappedItem.Page);
+    public TPage Create<TPage>(IPage page)
+        where TPage : IPageWrapper<IPage>
+        => Create<TPage>(() => page);
 
-    public TPage Create<TPage>(Func<TPage> getPage)
-        where TPage : IWrapper<IPage> =>
-        Create<TPage>(getPage().WrappedItem);
+    public TPage Create<TPage>(ILocatorWrapper<ILocator> locatorWrapper)
+        where TPage : IPageWrapper<IPage>
+        => Create<TPage>(() => locatorWrapper.WrappedItem.Page);
 
-    public async Task<TPage> CreateAsync<TPage>(Func<Task<TPage>> getPageAsync)
-        where TPage : IWrapper<IPage>
+    public async Task<TPage> CreateAsync<TPage>(Func<Task<IPage>> getPageAsync)
+        where TPage : IPageWrapper<IPage>
     {
-        var page = (await getPageAsync()).WrappedItem;
+        var page = await getPageAsync();
         return Create<TPage>(page);
     }
-
-    public IPageFactory PageFactory => this;
-    public IControlFactory ControlFactory => this;
 }

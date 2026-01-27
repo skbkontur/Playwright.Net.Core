@@ -65,7 +65,7 @@ public static class ElementsCollectionExtensions
         Func<TItem, IEnumerable<IWrapper<ILocator>>> getProps,
         IEnumerable<IEnumerable<string>> expectedRowTexts,
         LocatorAssertionsToHaveTextOptions? options = null
-    ) where TItem : IWrapper<ILocator>
+    ) where TItem : ILocatorWrapper<ILocator>
     {
         await elementsCollection.Expect().ToHaveCountAsync(expectedRowTexts.Count());
         var assertions = elementsCollection
@@ -87,7 +87,7 @@ public static class ElementsCollectionExtensions
         Func<TItem, IEnumerable<IWrapper<ILocator>>> getProps,
         IEnumerable<IEnumerable<string>> expectedRowTexts,
         LocatorAssertionsToHaveTextOptions? options = null
-    ) where TItem : IWrapper<ILocator>
+    ) where TItem : ILocatorWrapper<ILocator>
     {
         await elementsCollection.Expect().ToHaveCountAsync(expectedRowTexts.Count());
         var assertions = new List<Task>();
