@@ -15,8 +15,9 @@ public class Navigation(IPageGetter pageGetter, IPageFactory pageObjectsFactory)
     {
         var page = await _page.Value;
         var pageObject = pageObjectsFactory.Create<TPage>(page);
-
-        await page.GotoAsync($"{pageObject.Url}/{path ?? string.Empty}", options);
+        var pageUrl = pageObject.Url.TrimEnd('/');
+        var fullUrl = $"{pageUrl}/{path ?? string.Empty}".TrimEnd('/');
+        await page.GotoAsync(fullUrl, options);
 
         if (pageObject is ILoadable loadable)
         {
@@ -29,7 +30,8 @@ public class Navigation(IPageGetter pageGetter, IPageFactory pageObjectsFactory)
     public async Task<IPage> GoToUrlAsync(string url, PageGotoOptions? options = null)
     {
         var browserPage = await _page.Value;
-        await browserPage.GotoAsync(url, options);
+        var pageUrl = url.TrimEnd('/');
+        await browserPage.GotoAsync(pageUrl, options);
         return browserPage;
     }
 }
