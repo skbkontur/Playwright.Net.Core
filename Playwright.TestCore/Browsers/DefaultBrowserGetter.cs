@@ -19,22 +19,20 @@ public class DefaultBrowserGetter(
     /// Лениво инициализируемый контекст браузера.
     /// Создаётся при первом обращении.
     /// </summary>
-    private readonly Lazy<Task<IBrowserContext>> _browserContext = new(browserFactory.CreateAsync);
+    private readonly Lazy<Task<IBrowserContext>> _browserContext = new(async () =>
+    {
+        var context = await browserFactory.CreateAsync();
+        await contextTracing.StartAsync(context);
+        return context;
+    });
 
     /// <summary>
     /// Получить контекст браузера с автоматическим запуском трассировки.
     /// При первом вызове создаёт контекст и начинает трассировку.
     /// </summary>
     /// <returns>Задача, возвращающая контекст браузера</returns>
-    public async Task<IBrowserContext> GetAsync()
-    {
-        if (!_browserContext.IsValueCreated)
-        {
-            await contextTracing.StartAsync(await _browserContext.Value);
-        }
-
-        return await _browserContext.Value;
-    }
+    public Task<IBrowserContext> GetAsync()
+        => _browserContext.Value;
 
     /// <summary>
     /// Останавливает трассировку и освобождает контекст.
@@ -43,8 +41,8 @@ public class DefaultBrowserGetter(
     {
         if (_browserContext.IsValueCreated)
         {
-            await contextTracing.StopAsync(await _browserContext.Value);
             var browserContext = await _browserContext.Value;
+            await contextTracing.StopAsync(browserContext);
             await browserContext.DisposeAsync();
         }
     }

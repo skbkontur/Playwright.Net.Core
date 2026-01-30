@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.POM.Abstractions;
 using SkbKontur.Playwright.TestCore.Pages;
 
 namespace SkbKontur.Playwright.TestCore.Browsers;
@@ -9,13 +10,36 @@ namespace SkbKontur.Playwright.TestCore.Browsers;
 /// Реализация работы с localStorage браузера.
 /// Выполняет JavaScript код на странице для доступа к localStorage.
 /// </summary>
-/// <param name="pageGetter">Получатель активной страницы браузера</param>
-public class LocalStorage(IPageGetter pageGetter) : ILocalStorage, IAsyncDisposable, IDisposable
+public class LocalStorage : ILocalStorage, IAsyncDisposable, IDisposable
 {
     /// <summary>
     /// Лениво инициализируемая страница браузера.
     /// </summary>
-    private readonly Lazy<Task<IPage>> _page = new(pageGetter.GetAsync);
+    private readonly Lazy<Task<IPage>> _page;
+    
+    /// <summary>
+    /// Реализация работы с localStorage браузера.
+    /// Выполняет JavaScript код на странице для доступа к localStorage.
+    /// </summary>
+    /// <param name="pageGetter">Получатель активной страницы браузера</param>
+    public LocalStorage(IPageGetter pageGetter) 
+        => _page = new Lazy<Task<IPage>>(pageGetter.GetAsync);
+    
+    /// <summary>
+    /// Реализация работы с localStorage браузера.
+    /// Выполняет JavaScript код на странице для доступа к localStorage.
+    /// </summary>
+    /// <param name="page">Активная страница браузера</param>
+    public LocalStorage(IPage page) 
+        => _page = new Lazy<Task<IPage>>(() => Task.FromResult(page));
+    
+    /// <summary>
+    /// Реализация работы с localStorage браузера.
+    /// Выполняет JavaScript код на странице для доступа к localStorage.
+    /// </summary>
+    /// <param name="page">Активная страница браузера</param>
+    public LocalStorage(IPageWrapper<IPage> page) 
+        => _page = new Lazy<Task<IPage>>(() => Task.FromResult(page.WrappedItem));
 
     /// <summary>
     /// Получить количество элементов в localStorage.

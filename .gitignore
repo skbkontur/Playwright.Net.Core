@@ -1,4 +1,4 @@
 ﻿.idea
 bin
 obj
-.user
+*.user
