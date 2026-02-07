@@ -11,7 +11,7 @@ namespace SkbKontur.Playwright.TestCore.Pages;
 /// Управляет жизненным циклом страницы в контексте браузера.
 /// </summary>
 /// <param name="browserGetter">Получатель контекста браузера</param>
-public class PageGetter(IBrowserGetter browserGetter)
+public class PageProvider(IBrowserGetter browserGetter)
     : IPageGetter, IAsyncDisposable, IDisposable
 {
     /// <summary>

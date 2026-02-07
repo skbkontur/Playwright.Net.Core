@@ -15,8 +15,9 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 public class FirefoxFactory(
     IPlaywrightFactory playwrightFactory,
     IBrowserConfigurator browserConfigurator,
-    IAuthStrategy authStrategy)
-    : BrowserFactoryBase(playwrightFactory, authStrategy)
+    IAuthStrategy authStrategy,
+    IContextOptionsUpdater contextUpdater)
+    : BrowserFactoryBase(playwrightFactory, authStrategy, contextUpdater)
 {
     /// <summary>
     /// Запустить браузер Firefox с указанными параметрами.

@@ -152,24 +152,62 @@
 - Стандартный тестовый класс демонстрирующий использование инфраструктуры
 - Показывает работу с Navigation, локаторами и assertions
 
+## Инструкция по настройке Playwright TestCore
+
 ### Регистрация в DI контейнере
 
-**Регистрация с NUnit:**
+Данная библиотека использует Dependency Injection (DI) для управления жизненным циклом браузера, страниц и аутентификации.
+
+#### 1. Базовая регистрация
+В методе инициализации вашего тестового проекта (например, в `GlobalSetup` или базовом классе тестов) создайте `ServiceCollection` и вызовите метод `AddPlaywrightTestCore`.
+
 ```csharp
-services.AddPlaywrightTestCore<TestInfoGetter>(); // настройка с TestInfoGetter без POM
+var services = new ServiceCollection();
+
+services.AddPlaywrightTestCore() // Регистрация базовой инфраструктуры
+        .UsePom();              // Регистрация инфраструктуры Page Object Model
 ```
 
-**Простая регистрация:**
+#### 2. Настройка информации о тестах (ITestInfoGetter)
+По умолчанию библиотека использует `EmptyTestInfoProvider`. Чтобы трассировки и отчеты содержали корректные имена тестов, необходимо подключить реализацию, специфичную для вашего фреймворка (NUnit, xUnit или MSTest), либо использовать дефолтный провайдер.
+
 ```csharp
-services.AddPlaywrightTestCore<TestInfoGetter>().UsePom();
+// Пример подключения своего провайдера метаданных тестов
+services.UseTestInfoProvider<DefaultTestInfoProvider>();
 ```
 
-**Расширенная конфигурация:**
+#### 3. Настройка сценариев аутентификации
+Если ваши тесты требуют авторизации, замените стандартный «пустой» аутентификатор на ваш рабочий:
+
 ```csharp
-services.AddPlaywrightTestCore<CustomTestInfoGetter>()
-        .UsePom()
-        .AddScoped<IBrowserConfigurator, CustomBrowserConfigurator>() // Своя конфигурация браузера
-        .AddScoped<IAuthStrategy, CustomAuthStrategy>(); // Своя стратегия аутентификации
+services.UseAuthenticator<MyProjectAuthenticator, AuthWithCacheStrategy>();
+```
+
+#### 4. Переопределение настроек браузера
+Для запуска тестов в конкретном режиме (например, в Headful для локальной отладки) используйте метод `UseBrowser`:
+
+```csharp
+services.UseBrowser<ChromeFactory, HeadfulConfigurator, ViewportSizeUpdater>();
+```
+
+#### 5. Кастомизация трассировок
+Вы можете переопределить логику сохранения трассировок (скриншотов, видео, логов Playwright):
+
+```csharp
+services.ReplaceTracing<CustomContextTracing, DefaultTracingConfigurator>();
+```
+
+#### Пример полной конфигурации
+Использование Fluent API позволяет настроить весь стек одной цепочкой:
+
+```csharp
+var serviceProvider = new ServiceCollection()
+    .AddPlaywrightTestCore<MyCustomConfig>() // Настройка базовых параметров (таймауты и т.д.)
+    .UseTestInfoProvider<NUnitTestInfoProvider>()
+    .UseBrowser<ChromeFactory, HeadlessConfigurator, ViewportSizeUpdater>()
+    .UseAuthenticator<IdentityServerAuthenticator, AuthWithCacheStrategy>()
+    .UsePom()
+    .BuildServiceProvider();
 ```
 
 ### Ключевые особенности архитектуры:
@@ -178,11 +216,11 @@ services.AddPlaywrightTestCore<CustomTestInfoGetter>()
 2. **Lazy loading** - тяжёлые объекты (Playwright, браузеры) создаются по требованию
 3. **Thread safety** - стратегии аутентификации защищены от конкурентного доступа
 4. **Расширяемость** - интерфейсы позволяют легко заменять реализации
-5. **Гибкая конфигурация DI** - методы `AddPlaywrightTestCore<TTestInfoGetter>` и `UsePom` для полной настройки
+5. **Гибкая конфигурация DI** - методы `AddPlaywrightTestCore` и `UsePom` для полной настройки
 6. **Интеграция с Playwright** - полная поддержка всех возможностей Playwright
 7. **POM паттерн** - поддержка создания типизированных page objects и page elements
 8. **Tracing и отладка** - встроенная поддержка трассировки для debugging
 9. **CI/CD готовность** - автоматическое определение headless режима
-10. **Фреймворк-агностичность** - поддержка разных фреймворков тестирования через generic параметр
+10. **Фреймворк-агностичность** - поддержка разных фреймворков тестирования
 
 Эта инфраструктура предоставляет полноценное решение для E2E тестирования веб-приложений с Playwright, следуя современным принципам архитектуры и обеспечивая высокую поддерживаемость и расширяемость кода тестов.

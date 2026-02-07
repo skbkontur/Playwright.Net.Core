@@ -20,12 +20,12 @@ public class HeadlessConfigurator : IBrowserConfigurator
     /// </summary>
     /// <returns>Параметры запуска браузера</returns>
     public BrowserTypeLaunchOptions GetLaunchOptions()
-        => new() {Headless = IsGitlabCi};
+        => new() {Headless = IsGitlabCi, Args = ["--start-maximized"]};
 
     /// <summary>
     /// Получить параметры запуска браузера с персистентным контекстом и автоматическим определением headless режима.
     /// </summary>
     /// <returns>Параметры запуска браузера с персистентным контекстом</returns>
     public BrowserTypeLaunchPersistentContextOptions GetLaunchPersistentContextOptions()
-        => new() {Headless = IsGitlabCi};
+        => new() {Headless = IsGitlabCi, Args = ["--start-maximized"]};
 }

@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using SkbKontur.Playwright.TestCore.Auth;
+using SkbKontur.Playwright.TestCore.Configurations;
 
 namespace SkbKontur.Playwright.TestCore.Factories;
 
@@ -12,7 +13,8 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 /// <param name="authStrategy">Стратегия аутентификации для применения к контексту браузера</param>
 public abstract class BrowserFactoryBase(
     IPlaywrightFactory playwrightFactory,
-    IAuthStrategy authStrategy
+    IAuthStrategy authStrategy,
+    IContextOptionsUpdater contextUpdater
 ) : IBrowserFactory
 {
     /// <summary>
@@ -23,8 +25,13 @@ public abstract class BrowserFactoryBase(
     {
         var pw = await playwrightFactory.GetPlaywrightAsync();
         var browser = await LaunchAsync(pw);
-        var contextOptions = authStrategy.GetOrCreateContextOptionsAsync();
-        return await browser.NewContextAsync(contextOptions);
+        var storageState = await authStrategy.GetOrCreateStorageStateAsync();
+        var options = new BrowserNewContextOptions
+        {
+            StorageState = storageState
+        };
+        contextUpdater.ExecuteAsync(options);
+        return await browser.NewContextAsync(options);
     }
 
     /// <summary>
