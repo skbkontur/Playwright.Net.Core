@@ -13,5 +13,5 @@ public class WithoutAuthStrategy : IAuthStrategy
     /// </summary>
     /// <returns>Null, так как аутентификация не выполняется</returns>
     public Task<string?> GetOrCreateStorageStateAsync()
-        => null;
+        => Task.FromResult<string?>(null);
 }
