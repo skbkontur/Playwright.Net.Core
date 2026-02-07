@@ -30,7 +30,7 @@ public abstract class BrowserFactoryBase(
         {
             StorageState = storageState
         };
-        contextUpdater.ExecuteAsync(options);
+        await contextUpdater.ExecuteAsync(options);
         return await browser.NewContextAsync(options);
     }
 
