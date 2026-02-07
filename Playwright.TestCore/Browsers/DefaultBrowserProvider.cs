@@ -10,9 +10,9 @@ namespace SkbKontur.Playwright.TestCore.Browsers;
 /// </summary>
 /// <param name="browserFactory">Фабрика для создания контекстов браузера</param>
 /// <param name="contextTracing">Сервис для управления трассировкой контекста</param>
-public class DefaultBrowserGetter(
+public class DefaultBrowserProvider(
     IBrowserFactory browserFactory,
-    IContextTracing contextTracing
+    IContextTracing tracing
 ) : IBrowserGetter, IAsyncDisposable, IDisposable
 {
     /// <summary>
@@ -22,7 +22,7 @@ public class DefaultBrowserGetter(
     private readonly Lazy<Task<IBrowserContext>> _browserContext = new(async () =>
     {
         var context = await browserFactory.CreateAsync();
-        await contextTracing.StartAsync(context);
+        await tracing.StartAsync(context);
         return context;
     });
 
@@ -42,7 +42,7 @@ public class DefaultBrowserGetter(
         if (_browserContext.IsValueCreated)
         {
             var browserContext = await _browserContext.Value;
-            await contextTracing.StopAsync(browserContext);
+            await tracing.StopAsync(browserContext);
             await browserContext.DisposeAsync();
         }
     }

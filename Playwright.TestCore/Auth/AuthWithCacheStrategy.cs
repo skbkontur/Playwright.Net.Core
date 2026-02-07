@@ -1,4 +1,5 @@
-using Microsoft.Playwright;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SkbKontur.Playwright.TestCore.Auth;
 
@@ -10,10 +11,10 @@ namespace SkbKontur.Playwright.TestCore.Auth;
 public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy
 {
     /// <summary>
-    /// Объект для синхронизации доступа к кэшу состояния.
+    /// Семафор для синхронизации доступа к кэшу состояния.
     /// </summary>
-    private static readonly object Lock = new();
-
+    private static readonly SemaphoreSlim Semaphore = new(1, 1);
+    
     /// <summary>
     /// Кэшированное состояние хранения браузера.
     /// </summary>
@@ -22,39 +23,32 @@ public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy
     /// <summary>
     /// Флаг, указывающий, была ли выполнена инициализация.
     /// </summary>
-    private static bool isInitialized = false;
-
-    /// <summary>
-    /// Получить параметры контекста браузера с кэшированным состоянием аутентификации.
-    /// </summary>
-    /// <returns>Параметры контекста с сохранённым состоянием хранения</returns>
-    public BrowserNewContextOptions GetOrCreateContextOptionsAsync()
-    {
-        var state = GetOrCreateStorageStateAsync();
-        return new BrowserNewContextOptions { StorageState = state };
-    }
+    private static bool _isInitialized = false;
 
     /// <summary>
     /// Получить кэшированное состояние.
     /// При первом вызове выполняет аутентификацию и кэширует результат.
     /// </summary>
     /// <returns>JSON строка с состоянием хранения или null</returns>
-    public string? GetOrCreateStorageStateAsync()
+    public async Task<string?> GetOrCreateStorageStateAsync()
     {
-        if (isInitialized || _cachedStorageState != null)
+        if (_isInitialized)
         {
             return _cachedStorageState;
         }
-
-        lock (Lock)
+        await Semaphore.WaitAsync();
+        try
         {
-            if (!isInitialized)
+            if (!_isInitialized)
             {
-                _cachedStorageState ??= authenticator.CreateStorageStateAsync().GetAwaiter().GetResult();
-                isInitialized = true;
+                _cachedStorageState = await authenticator.CreateStorageStateAsync();
+                _isInitialized = true;
             }
         }
-
+        finally
+        {
+            Semaphore.Release();
+        }
         return _cachedStorageState;
     }
 }

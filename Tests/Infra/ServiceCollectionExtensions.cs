@@ -11,14 +11,15 @@ public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Зарегистрировать все компоненты Playwright TestCore в DI контейнере для использования с NUnit.
-    /// Удобный метод, который использует TestInfoGetter для получения информации о тестах из NUnit TestContext.
+    /// Удобный метод, который использует NUnitTestInfoProvider для получения информации о тестах из NUnit TestContext.
     /// </summary>
     /// <param name="sc">Коллекция сервисов для расширения</param>
     /// <returns>Расширенная коллекция сервисов</returns>
     public static IServiceCollection UsePlaywright(this IServiceCollection sc)
     {
-        sc.AddPlaywrightTestCore<TestInfoGetter>();
+        sc.AddPlaywrightTestCore();
         sc.UsePom();
+        sc.UseTestInfoProvider<NUnitTestInfoProvider>();
         return sc;
     }
 }

@@ -15,9 +15,10 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 public class ChromeFactory(
     IPlaywrightFactory playwrightFactory,
     IBrowserConfigurator browserConfigurator,
-    IAuthStrategy authStrategy
+    IAuthStrategy authStrategy,
+    IContextOptionsUpdater contextOptionsUpdater
 )
-    : BrowserFactoryBase(playwrightFactory, authStrategy)
+    : BrowserFactoryBase(playwrightFactory, authStrategy, contextOptionsUpdater)
 {
     /// <summary>
     /// Запустить браузер Chrome с указанными параметрами.

@@ -7,7 +7,7 @@ namespace Tests.Infra;
 /// Провайдер информации о текущем тесте для интеграции с NUnit.
 /// Получает метаданные теста из TestContext NUnit.
 /// </summary>
-public class TestInfoGetter : ITestInfoGetter
+public class NUnitTestInfoProvider : ITestInfoGetter
 {
     /// <summary>
     /// Уникальный идентификатор теста из NUnit
