@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using NUnit.Framework;
 using SkbKontur.Playwright.TestCore;
+using SkbKontur.Playwright.TestCore.Browsers;
 using SkbKontur.Playwright.TestCore.Pages;
 using Tests.Infra;
 using Tests.POM.Pages;
@@ -73,7 +74,7 @@ public class RunPwShould
         var logo = page.Locator(".kontur-logo_main");
         await Assertions.Expect(logo).ToContainClassAsync("kontur-logo");
     }
-    
+
     /// <summary>
     /// Тест успешного выполнения с использованием обычного scope.
     /// Проверяет загрузку главной страницы kontur.ru и наличие заголовка.
@@ -96,14 +97,32 @@ public class RunPwShould
     [Test]
     public async Task BeSuccess_FromAsyncScope_WithPom([Values(
             "",
-            "products/docs",
-            "products/reporting")]
-        string additionalPath)
+            "/products/docs",
+            "/products/reporting")]
+        string uri)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         var services = scope.ServiceProvider;
         var navigation = services.GetRequiredService<Navigation>();
-        var page = await navigation.GoToPageAsync<KonturPage>(additionalPath);
+        var page = await navigation.GoToPageAsync<KonturPage>(uri);
         await page.Logo.Expect().ToContainClassAsync("kontur-logo");
+    }
+
+    [Test]
+    public async Task LocalStorageShouldWork([Range(1, 5)] int value)
+    {
+        var key = value.ToString();
+        var expectValue = (value * value).ToString();
+
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var services = scope.ServiceProvider;
+        var navigation = services.GetRequiredService<Navigation>();
+        
+        await navigation.GoToPageAsync<KonturPage>();
+        var localStorage = services.GetRequiredService<ILocalStorage>();
+        await localStorage.SetItemAsync(key, expectValue);
+
+        var actual = await localStorage.GetItemAsync(key);
+        Assert.That(actual, Is.EqualTo(expectValue));
     }
 }

@@ -92,7 +92,7 @@ public static class ServiceCollectionExtensions
         sc.AddScoped<IContextTracing, ContextTracing>();
         sc.AddScoped<ITracingConfigurator, DefaultTracingConfigurator>();
         sc.AddScoped<IPageGetter, PageProvider>();
-        sc.AddScoped<ILocalStorage, LocalStorage>();
+        sc.AddScoped<ILocalStorage>(x => new LocalStorage(x.GetRequiredService<IPageGetter>()));
         return sc;
     }
 

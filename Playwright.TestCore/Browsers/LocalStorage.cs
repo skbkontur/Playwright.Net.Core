@@ -22,7 +22,7 @@ public class LocalStorage : ILocalStorage, IAsyncDisposable, IDisposable
     /// Выполняет JavaScript код на странице для доступа к localStorage.
     /// </summary>
     /// <param name="pageGetter">Получатель активной страницы браузера</param>
-    public LocalStorage(IPageGetter pageGetter) 
+    public LocalStorage(IPageGetter pageGetter)
         => _page = new Lazy<Task<IPage>>(pageGetter.GetAsync);
     
     /// <summary>
