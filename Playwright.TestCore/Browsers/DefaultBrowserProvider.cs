@@ -39,11 +39,21 @@ public class DefaultBrowserProvider(
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        if (_browserContext.IsValueCreated)
+        if (!_browserContext.IsValueCreated)
+            return;
+
+        var task = _browserContext.Value;
+        if (task.IsFaulted || task.IsCanceled)
+            return;
+
+        try
         {
-            var browserContext = await _browserContext.Value;
+            var browserContext = await task;
             await tracing.StopAsync(browserContext);
             await browserContext.DisposeAsync();
+        }
+        catch (PlaywrightException)
+        {
         }
     }
 

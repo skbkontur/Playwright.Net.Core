@@ -40,10 +40,20 @@ public class PageProvider(IBrowserGetter browserGetter)
     /// <returns>Задача завершения закрытия страницы</returns>
     public async ValueTask DisposeAsync()
     {
-        if (_page.IsValueCreated)
+        if (!_page.IsValueCreated)
+            return;
+
+        var task = _page.Value;
+        if (task.IsFaulted || task.IsCanceled)
+            return;
+
+        try
         {
-            var page = await _page.Value;
+            var page = await task;
             await page.CloseAsync();
+        }
+        catch (PlaywrightException)
+        {
         }
     }
 
