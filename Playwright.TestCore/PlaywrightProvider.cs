@@ -6,8 +6,9 @@ using SkbKontur.Playwright.TestCore.Configurations;
 namespace SkbKontur.Playwright.TestCore;
 
 /// <summary>
-/// Фабрика для создания экземпляров Playwright с применением конфигурации.
+/// Провайдер экземпляров Playwright с применением конфигурации.
 /// Использует ленивую инициализацию для создания единственного экземпляра Playwright.
+/// Реализует IDisposable и IAsyncDisposable для корректного освобождения ресурсов.
 /// </summary>
 /// <typeparam name="TConfiguration">Тип конфигурации Playwright, должен реализовывать IPlaywrightConfiguration</typeparam>
 public class PlaywrightProvider<TConfiguration> : IPlaywrightGetter, IAsyncDisposable, IDisposable
@@ -31,6 +32,9 @@ public class PlaywrightProvider<TConfiguration> : IPlaywrightGetter, IAsyncDispo
     public Task<IPlaywright> GetPlaywrightAsync()
         => Playwright.Value;
 
+    /// <summary>
+    /// Освободить ресурсы экземпляра Playwright.
+    /// </summary>
     public void Dispose()
     {
         if (Playwright.IsValueCreated)
@@ -39,6 +43,9 @@ public class PlaywrightProvider<TConfiguration> : IPlaywrightGetter, IAsyncDispo
         }
     }
 
+    /// <summary>
+    /// Асинхронно освободить ресурсы экземпляра Playwright.
+    /// </summary>
     public async ValueTask DisposeAsync()
         => await Task.Run(Dispose);
 }

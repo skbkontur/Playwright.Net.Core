@@ -4,9 +4,19 @@ using SkbKontur.Playwright.TestCore.Configurations;
 
 namespace SkbKontur.Playwright.TestCore.Factories;
 
+/// <summary>
+/// Фабрика для создания браузера WebKit.
+/// Использует WebKit движок Playwright с конфигурацией браузера.
+/// </summary>
+/// <param name="playwrightGetter">Провайдер для получения экземпляра Playwright</param>
+/// <param name="configurator">Конфигуратор параметров запуска браузера</param>
 public class WebkitFactory(IPlaywrightGetter playwrightGetter, IBrowserConfigurator configurator)
     : IBrowserFactory
 {
+    /// <summary>
+    /// Создать и запустить браузер WebKit с указанными параметрами.
+    /// </summary>
+    /// <returns>Задача, возвращающая запущенный браузер WebKit</returns>
     public async Task<IBrowser> CreateAsync()
     {
         var pw = await playwrightGetter.GetPlaywrightAsync();

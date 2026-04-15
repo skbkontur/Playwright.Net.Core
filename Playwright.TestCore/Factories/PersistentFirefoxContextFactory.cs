@@ -10,9 +10,8 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 /// Фабрика для создания персистентных контекстов браузера Firefox.
 /// Каждый контекст сохраняется в отдельной директории пользователя.
 /// </summary>
-/// <param name="playwrightGetter">Фабрика для получения экземпляра Playwright</param>
+/// <param name="playwrightGetter">Провайдер для получения экземпляра Playwright</param>
 /// <param name="browserConfigurator">Конфигуратор параметров запуска браузера</param>
-/// <param name="testInfoGetter">Провайдер информации о текущем тесте</param>
 public class PersistentFirefoxContextFactory(
     IPlaywrightGetter playwrightGetter,
     IBrowserConfigurator browserConfigurator

@@ -11,6 +11,6 @@ public interface IBrowserFactory
     /// <summary>
     /// Асинхронно создать новый браузер.
     /// </summary>
-    /// <returns>Задача, возвращающая созданный IBrowserContext</returns>
+    /// <returns>Задача, возвращающая созданный IBrowser</returns>
     Task<IBrowser> CreateAsync();
 }

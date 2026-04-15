@@ -12,6 +12,7 @@ namespace SkbKontur.Playwright.TestCore.Pages;
 /// Управляет жизненным циклом страницы в контексте браузера.
 /// </summary>
 /// <param name="browserContextGetter">Получатель контекста браузера</param>
+/// <param name="beforeDisposeActions">Коллекция действий, выполняемых перед закрытием страницы</param>
 public class PageProvider(
     IBrowserContextGetter browserContextGetter,
     IEnumerable<IBeforeDisposePageActions> beforeDisposeActions

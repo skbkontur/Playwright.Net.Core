@@ -53,38 +53,56 @@
 ### Архитектура
 
 - Построена на принципах Dependency Injection
-- Использует паттерн Factory для создания компонентов
+- Трёхуровневая модель: Playwright → Browser → BrowserContext → Page
 - Поддерживает различные стратегии аутентификации
 - Обеспечивает thread-safety и lazy loading для тяжёлых объектов
-- Интегрируется с различными тестовыми фреймворками (NUnit, xUnit, MSTest)
+- Расширяемая система трассировки и действий при закрытии страниц
 
 ---
 
 ### Основные компоненты
 
-## 1. Фабрики (Factories)
+## 1. Провайдеры (Providers)
 
-### IPlaywrightFactory / PlaywrightFactory\<TConfiguration\>
+### IPlaywrightGetter / PlaywrightProvider\<TConfiguration\>
 Создание и управление экземпляром Playwright.
 - Кэширует экземпляр Playwright
 - Применяет конфигурацию через generic параметр `TConfiguration`
 - Использует lazy loading для инициализации
+- Реализует `IDisposable` и `IAsyncDisposable`
 
-### IBrowserFactory / BrowserFactoryBase
-Абстрактная фабрика для создания браузерных контекстов.
-- Поддерживает различные браузеры (Chrome, Firefox)
-- Интегрируется со стратегиями аутентификации
-- Управляет жизненным циклом контекстов браузера
+### IBrowserGetter / SingletonBrowserProvider / TransientBrowserProvider
+Получение и управление экземпляром браузера.
+- `SingletonBrowserProvider` — один экземпляр браузера на весь процесс (статическое поле)
+- `TransientBrowserProvider` — экземпляр браузера привязан к конкретному провайдеру
+- Потокобезопасная инициализация через `SemaphoreSlim`
 
-### ChromeFactory, FirefoxFactory
-Конкретные реализации для запуска браузеров.
+### IBrowserContextGetter / DefaultBrowserContextProvider
+Управление жизненным циклом контекста браузера.
+- Создаёт контекст через `IBrowserContextFactory`
+- Автоматически запускает и останавливает трассировку
+- Управляет очисткой ресурсов при `Dispose`
+
+---
+
+## 2. Фабрики (Factories)
+
+### IBrowserFactory / ChromeFactory, FirefoxFactory, WebkitFactory
+Фабрики для создания экземпляров браузеров.
+- Возвращают `IBrowser` (не контекст)
 - Используют `IBrowserConfigurator` для настроек запуска
-- Создают новые контексты для каждого теста
+- Поддерживают Chrome (Chromium), Firefox и WebKit
 
-### PersistentChromeFactory, PersistentFirefoxFactory
+### IBrowserContextFactory / DefaultBrowserContextFactory
+Фабрика для создания контекстов браузера.
+- Получает `IBrowser` через `IBrowserGetter`
+- Применяет стратегию аутентификации
+- Обновляет параметры контекста через `IContextOptionsUpdater`
+
+### PersistentChromeContextFactory, PersistentFirefoxContextFactory, PersistentWebkitContextFactory
 Создание персистентных контекстов браузеров.
 - Используют отдельные директории пользователя
-- Сохраняют состояние между запусками тестов
+- Реализуют `IBrowserContextFactory`
 - Полезны для работы с расширениями браузера
 
 ### PageObjectsFactory
@@ -95,7 +113,7 @@
 
 ---
 
-## 2. Стратегии аутентификации (Auth)
+## 3. Стратегии аутентификации (Auth)
 
 ### IAuthStrategy
 Определяет интерфейс стратегии аутентификации.
@@ -110,7 +128,7 @@
 Стратегия с кэшированием состояния аутентификации.
 - Кэширует состояние аутентификации между тестами
 - Использует двойную проверку блокировки для thread-safety
-- Значительно ускоряет выполнение тестов
+- Реализует `IDisposable` и `IAsyncDisposable`
 
 ### WithoutAuthStrategy / WithoutAuthAuthenticator
 Пустые реализации для сценариев без аутентификации.
@@ -119,12 +137,12 @@
 
 ---
 
-## 3. Конфигурации (Configurations)
+## 4. Конфигурации (Configurations)
 
-### IPlaywrightConfiguration / DefaultPlaywrightConfiguration
+### IPlaywrightConfiguration / DefaultPlaywrightConfiguration / DataTidConfiguration
 Настройка глобальных параметров Playwright.
-- Устанавливает атрибут для поиска элементов (по умолчанию `data-tid`)
-- Настраивает таймауты и другие глобальные параметры
+- `DefaultPlaywrightConfiguration` — пустая конфигурация без параметров
+- `DataTidConfiguration` — устанавливает атрибут `data-tid` для поиска элементов
 - Применяется при инициализации Playwright
 
 ### IBrowserConfigurator / HeadlessConfigurator
@@ -139,36 +157,32 @@
 - `ViewportSizeUpdater` - устанавливает размер viewport браузера
 - Применяется перед созданием контекста
 
-### ITracingConfigurator / DefaultTracingConfigurator / FixtureTracingConfigurator
+### ITracingConfigurator / DefaultTracingConfigurator
 Конфигурация трассировки Playwright.
 - Метод `GetTracingStartOptions()` - опции запуска трассировки
 - Метод `GetTracingStopOptions()` - опции остановки и сохранения трассировки
+- `DefaultTracingConfigurator` содержит свойства `TestName`, `TestClassName`, `WorkDirectory` с значениями по умолчанию
 - Сохраняет трассировку в ZIP файлы с названиями тестов
-- `FixtureTracingConfigurator` - сохраняет трассировку для всего класса тестов
-
-### ITestInfoGetter
-Предоставление метаданных о текущем тесте.
-- ID теста
-- Имя теста
-- Класс теста
-- Рабочая директория для артефактов
-- Используется для именования файлов трассировки
 
 ---
 
-## 4. Компоненты браузеров (Browsers)
+## 5. Трассировка (Tracing)
 
-### IBrowserGetter / DefaultBrowserProvider
-Создание и управление контекстами браузеров.
-- Создают новый контекст браузера для каждого теста
-- Интегрируют трассировку автоматически
-- Применяют `IContextOptionsUpdater` перед созданием контекста
-
-### IContextTracing / ContextTracing
+### IContextTracing / FullTracing / FailureTestsTracing
 Управление трассировкой на уровне контекста браузера.
+- `FullTracing` — записывает и сохраняет трассировку всегда
+- `FailureTestsTracing` — сохраняет трассировку только при падении теста (использует `IFailureTestResult`)
 - Стартуют запись трассировки при создании контекста
 - Останавливают и сохраняют трассировку после теста
-- Интегрируются с `ITracingConfigurator`
+
+### IFailureTestResult
+Интерфейс для определения результата выполнения теста.
+- Используется `FailureTestsTracing` для условной записи трассировок
+- Реализация зависит от тестового фреймворка (NUnit, xUnit, MSTest)
+
+---
+
+## 6. Компоненты браузеров (Browsers)
 
 ### ILocalStorage / LocalStorage
 Доступ к localStorage браузера.
@@ -178,13 +192,19 @@
 
 ---
 
-## 5. Компоненты страниц (Pages)
+## 7. Компоненты страниц (Pages)
 
 ### IPageGetter / PageProvider
 Получение активной страницы браузера.
 - Возвращает текущую активную страницу
 - Создаёт новую страницу при необходимости
-- Интегрируется с контекстом браузера
+- Выполняет `IBeforeDisposePageActions` перед закрытием страницы
+
+### IBeforeDisposePageActions / NoActions
+Расширение поведения при закрытии страницы.
+- Позволяет выполнить действия перед закрытием (например, сохранить скриншот)
+- `NoActions` — реализация по умолчанию (ничего не делает)
+- Регистрируется через DI, поддерживает множественные регистрации
 
 ### ILoadable
 Интерфейс для объектов, требующих асинхронной загрузки.
@@ -193,7 +213,7 @@
 
 ---
 
-## 6. Коллекции (Collections)
+## 8. Коллекции (Collections)
 
 ### ElementsCollection\<TItem\>
 Представление коллекции элементов на странице.
@@ -210,7 +230,7 @@
 
 ---
 
-## 7. Система зависимостей (Dependencies)
+## 9. Система зависимостей (Dependencies)
 
 ### IDependenciesFactory / DependencyFactory
 Создание зависимостей для конструкторов page objects.
@@ -226,16 +246,16 @@
 
 ---
 
-## 8. Инфраструктура и расширения
+## 10. Инфраструктура и расширения
 
 ### ServiceCollectionExtensions
 Расширения для `IServiceCollection` для регистрации компонентов в DI.
-- `AddPlaywrightTestCore<TTestInfoGetter>()` - регистрация базовых компонентов
-- `UsePom()` - регистрация инфраструктуры Page Object Model
-- `UseTestInfoProvider<T>()` - регистрация провайдера информации о тестах
-- `UseBrowser<TFactory, TConfigurator, TUpdater>()` - настройка браузера
-- `UseAuthenticator<TAuthenticator, TStrategy>()` - настройка аутентификации
-- `ReplaceTracing<TTracing, TConfigurator>()` - замена реализации трассировки
+- `AddPlaywrightTestCore()` — регистрация с конфигурацией по умолчанию (`DefaultPlaywrightConfiguration`, `SingletonBrowserProvider`)
+- `AddPlaywrightTestCore<TConfig, TBrowserProvider>()` — регистрация с указанной конфигурацией и провайдером браузера
+- `UsePom()` — регистрация инфраструктуры Page Object Model
+- `UseBrowser<TFactory, TConfigurator, TUpdater>()` — настройка фабрики браузера
+- `UseAuthenticator<TAuthenticator, TStrategy>()` — настройка аутентификации
+- `ReplaceTracing<TTracing, TConfigurator, TFailureProvider>()` — замена реализации трассировки
 
 ### BrowsersInstaller
 Установка браузеров Playwright.
@@ -259,16 +279,26 @@ services.AddPlaywrightTestCore() // Регистрация базовой инф
         .UsePom();               // Регистрация инфраструктуры Page Object Model
 ```
 
-#### 2. Настройка информации о тестах (ITestInfoGetter)
+По умолчанию используется `DefaultPlaywrightConfiguration` (пустая конфигурация) и `SingletonBrowserProvider` (один браузер на процесс).
 
-По умолчанию библиотека использует `EmptyTestInfoProvider`. Чтобы трассировки и отчеты содержали корректные имена тестов, необходимо подключить реализацию, специфичную для вашего фреймворка (NUnit, xUnit или MSTest), либо использовать дефолтный провайдер.
+#### 2. Настройка конфигурации Playwright
+
+Для установки атрибута `data-tid` для поиска элементов:
 
 ```csharp
-// Пример подключения своего провайдера метаданных тестов
-services.UseTestInfoProvider<DefaultTestInfoProvider>();
+services.AddPlaywrightTestCore<DataTidConfiguration, SingletonBrowserProvider>();
 ```
 
-#### 3. Настройка сценариев аутентификации
+#### 3. Выбор провайдера браузера
+
+- `SingletonBrowserProvider` — один экземпляр браузера на весь процесс (по умолчанию, быстрее)
+- `TransientBrowserProvider` — экземпляр браузера на каждый провайдер
+
+```csharp
+services.AddPlaywrightTestCore<DataTidConfiguration, TransientBrowserProvider>();
+```
+
+#### 4. Настройка сценариев аутентификации
 
 Если ваши тесты требуют авторизации, замените стандартный «пустой» аутентификатор на ваш рабочий:
 
@@ -276,7 +306,7 @@ services.UseTestInfoProvider<DefaultTestInfoProvider>();
 services.UseAuthenticator<MyProjectAuthenticator, AuthWithCacheStrategy>();
 ```
 
-#### 4. Переопределение настроек браузера
+#### 5. Переопределение настроек браузера
 
 Для запуска тестов в конкретном режиме (например, в Headful для локальной отладки) используйте метод `UseBrowser`:
 
@@ -284,25 +314,35 @@ services.UseAuthenticator<MyProjectAuthenticator, AuthWithCacheStrategy>();
 services.UseBrowser<ChromeFactory, HeadfulConfigurator, ViewportSizeUpdater>();
 ```
 
-#### 5. Кастомизация трассировок
+Поддерживаемые фабрики: `ChromeFactory`, `FirefoxFactory`, `WebkitFactory`.
 
-Вы можете переопределить логику сохранения трассировок (скриншотов, видео, логов Playwright):
+#### 6. Кастомизация трассировок
+
+Вы можете переопределить логику сохранения трассировок:
 
 ```csharp
-services.ReplaceTracing<CustomContextTracing, DefaultTracingConfigurator>();
+// Запись трассировки только при падении теста
+services.ReplaceTracing<FailureTestsTracing, MyTracingConfigurator, MyFailureTestResult>();
+```
+
+#### 7. Действия перед закрытием страницы
+
+Для сохранения скриншотов или сбора данных перед закрытием:
+
+```csharp
+// Замените NoActions на свою реализацию
+services.AddScoped<IBeforeDisposePageActions, ScreenshotOnFailure>();
 ```
 
 #### Пример полной конфигурации
 
-Использование Fluent API позволяет настроить весь стек одной цепочкой:
-
 ```csharp
 var serviceProvider = new ServiceCollection()
-    .AddPlaywrightTestCore<DefaultPlaywrightConfiguration>() // Настройка базовых параметров
-    .UseTestInfoProvider<NUnitTestInfoProvider>()            // Интеграция с NUnit
-    .UseBrowser<ChromeFactory, HeadlessConfigurator, ViewportSizeUpdater>() // Chrome headless
-    .UseAuthenticator<IdentityServerAuthenticator, AuthWithCacheStrategy>() // Авторизация с кэшем
-    .UsePom()                                                // Page Object Model
+    .AddPlaywrightTestCore<DataTidConfiguration, SingletonBrowserProvider>()
+    .UseBrowser<ChromeFactory, HeadlessConfigurator, ViewportSizeUpdater>()
+    .UseAuthenticator<IdentityServerAuthenticator, AuthWithCacheStrategy>()
+    .ReplaceTracing<FailureTestsTracing, MyTracingConfigurator, NUnitFailureTestResult>()
+    .UsePom()
     .BuildServiceProvider();
 ```
 
@@ -310,62 +350,38 @@ var serviceProvider = new ServiceCollection()
 
 ## Пример тестового проекта
 
-### ServiceCollectionExtensions.UsePlaywright()
-
-Расширение для регистрации всех компонентов TestCore в DI контейнере с поддержкой NUnit:
+### Базовая регистрация
 
 ```csharp
 public static IServiceCollection UsePlaywright(this IServiceCollection services)
 {
     return services
-        .AddPlaywrightTestCore<DefaultPlaywrightConfiguration>()
-        .UseTestInfoProvider<NUnitTestInfoProvider>()
+        .AddPlaywrightTestCore<DataTidConfiguration, SingletonBrowserProvider>()
         .UseBrowser<ChromeFactory, HeadlessConfigurator, ViewportSizeUpdater>()
         .UsePom();
 }
 ```
 
-### TestInfoGetter
-
-Адаптер для получения метаданных тестов из NUnit TestContext:
-
-```csharp
-public class NUnitTestInfoProvider : ITestInfoGetter
-{
-    public string GetTestId() => TestContext.CurrentContext.Test.ID;
-    public string GetTestName() => TestContext.CurrentContext.Test.Name;
-    public string GetTestClassName() => TestContext.CurrentContext.Test.ClassName;
-    public string GetWorkDirectory() => TestContext.CurrentContext.WorkDirectory;
-}
-```
-
 ### Базовый класс для тестов
 
-Стандартный базовый класс демонстрирующий использование инфраструктуры:
-
 ```csharp
-public class BaseTest
+[Parallelizable(ParallelScope.All)]
+public class RunPwShould
 {
-    protected IServiceProvider ServiceProvider { get; private set; }
-    protected IPageFactory PageFactory { get; private set; }
-    
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        ServiceProvider = new ServiceCollection()
-            .UsePlaywright()
-            .BuildServiceProvider();
-            
-        PageFactory = ServiceProvider.GetRequiredService<IPageFactory>();
-    }
-    
+    private static readonly IServiceProvider ServiceProvider = new ServiceCollection()
+        .AddPlaywrightTestCore()
+        .UsePom()
+        .BuildServiceProvider();
+
     [Test]
-    public async Task ExampleTest()
+    public async Task BeSuccess_FromAsyncScope()
     {
-        var page = PageFactory.Create<MainPage>();
-        await page.NavigateAsync();
-        await page.SearchBox.FillAsync("Playwright");
-        // ...
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var services = scope.ServiceProvider;
+        var navigation = services.GetRequiredService<Navigation>();
+        var page = await navigation.GoToUrlAsync("https://kontur.ru");
+        var header = page.Locator("h1", new() { HasText = "Экосистема" });
+        await Assertions.Expect(header).ToContainTextAsync("для бизнеса");
     }
 }
 ```
@@ -374,19 +390,13 @@ public class BaseTest
 
 ## Ключевые особенности архитектуры
 
-1. **Dependency Injection в основе** - все компоненты разрешаются через DI контейнер
-2. **Lazy loading** - тяжёлые объекты (Playwright, браузеры) создаются по требованию
-3. **Thread safety** - стратегии аутентификации защищены от конкурентного доступа
-4. **Расширяемость** - интерфейсы позволяют легко заменять реализации
-5. **Гибкая конфигурация** - Fluent API для настройки всех компонентов
-6. **Интеграция с Playwright** - полная поддержка всех возможностей Playwright
-7. **POM паттерн** - поддержка создания типизированных page objects и page elements
-8. **Tracing и отладка** - встроенная поддержка трассировки для debugging
-9. **CI/CD готовность** - автоматическое определение headless режима в CI окружении
-10. **Фреймворк-агностичность** - поддержка разных фреймворков тестирования (NUnit, xUnit, MSTest)
-
----
-
-## Заключение
-
-Эта инфраструктура предоставляет полноценное решение для E2E тестирования веб-приложений с Microsoft Playwright, следуя современным принципам архитектуры и обеспечивая высокую поддерживаемость и расширяемость кода тестов.
+1. **Dependency Injection в основе** — все компоненты разрешаются через DI контейнер
+2. **Трёхуровневая модель** — Playwright → Browser (IBrowserGetter) → BrowserContext (IBrowserContextGetter) → Page (IPageGetter)
+3. **Lazy loading** — тяжёлые объекты (Playwright, браузеры) создаются по требованию
+4. **Thread safety** — Singleton/Transient провайдеры защищены SemaphoreSlim
+5. **Расширяемость** — интерфейсы позволяют легко заменять реализации на любом уровне
+6. **Гибкая трассировка** — запись всегда (`FullTracing`) или только при падении (`FailureTestsTracing`)
+7. **Хуки закрытия страниц** — `IBeforeDisposePageActions` для скриншотов, логов и пр.
+8. **POM паттерн** — поддержка создания типизированных page objects и page elements
+9. **CI/CD готовность** — автоматическое определение headless режима в CI окружении
+10. **Мультибраузерность** — поддержка Chrome, Firefox и WebKit

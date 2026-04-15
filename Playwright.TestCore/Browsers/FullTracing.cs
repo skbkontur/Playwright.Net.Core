@@ -31,10 +31,11 @@ public class FullTracing(ITracingConfigurator tracingConfigurator) : IContextTra
 }
 
 /// <summary>
-/// Реализация управления трассировкой контекста браузера.
-/// Использует конфигуратор трассировки для получения параметров.
+/// Реализация управления трассировкой, сохраняющая трассировку только при падении теста.
+/// При успешном завершении теста трассировка останавливается без сохранения файла.
 /// </summary>
 /// <param name="tracingConfigurator">Конфигуратор параметров трассировки</param>
+/// <param name="failureTestResult">Провайдер результата выполнения теста</param>
 public class FailureTestsTracing(
     ITracingConfigurator tracingConfigurator,
     IFailureTestResult failureTestResult
