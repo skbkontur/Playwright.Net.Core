@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 
-namespace SkbKontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore;
 
 /// <summary>
 /// Интерфейс фабрики для создания и управления экземплярами Playwright.

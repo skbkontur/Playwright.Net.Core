@@ -2,14 +2,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
+using SkbKontur.Playwright.TestCore.Factories;
 
-namespace SkbKontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore.Browsers;
 
-public class SingletonBrowserProvider(IBrowserFactory browserFactory) : IBrowserGetter, IDisposable, IAsyncDisposable
+public class TransientBrowserProvider(IBrowserFactory browserFactory) : IBrowserGetter, IDisposable, IAsyncDisposable
 {
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    private static IBrowser? _browser = null;
+    private IBrowser? _browser = null;
 
     public async Task<IBrowser> GetAsync()
     {
@@ -18,7 +19,7 @@ public class SingletonBrowserProvider(IBrowserFactory browserFactory) : IBrowser
             return _browser;
         }
 
-        await Semaphore.WaitAsync();
+        await _semaphore.WaitAsync();
 
         try
         {
@@ -26,7 +27,7 @@ public class SingletonBrowserProvider(IBrowserFactory browserFactory) : IBrowser
         }
         finally
         {
-            Semaphore.Release();
+            _semaphore.Release();
         }
 
         return _browser;
@@ -34,7 +35,7 @@ public class SingletonBrowserProvider(IBrowserFactory browserFactory) : IBrowser
 
     public void Dispose()
     {
-        Semaphore.Dispose();
+        _semaphore.Dispose();
         if (_browser is IDisposable browserDisposable)
         {
             browserDisposable.Dispose();
@@ -47,13 +48,13 @@ public class SingletonBrowserProvider(IBrowserFactory browserFactory) : IBrowser
 
     public async ValueTask DisposeAsync()
     {
-        if (Semaphore is IAsyncDisposable semaphoreAsyncDisposable)
+        if (_semaphore is IAsyncDisposable semaphoreAsyncDisposable)
         {
             await semaphoreAsyncDisposable.DisposeAsync();
         }
         else
         {
-            Semaphore.Dispose();
+            _semaphore.Dispose();
         }
         if (_browser != null)
         {

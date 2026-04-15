@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using SkbKontur.Playwright.TestCore.Auth;
+using SkbKontur.Playwright.TestCore.Browsers;
 using SkbKontur.Playwright.TestCore.Configurations;
 
 namespace SkbKontur.Playwright.TestCore.Factories;

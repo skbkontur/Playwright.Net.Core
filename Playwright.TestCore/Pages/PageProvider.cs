@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
@@ -11,15 +12,17 @@ namespace SkbKontur.Playwright.TestCore.Pages;
 /// Управляет жизненным циклом страницы в контексте браузера.
 /// </summary>
 /// <param name="browserContextGetter">Получатель контекста браузера</param>
-public class PageProvider(IBrowserContextGetter browserContextGetter)
+public class PageProvider(
+    IBrowserContextGetter browserContextGetter,
+    IEnumerable<IBeforeDisposePageActions> beforeDisposeActions
+)
     : IPageGetter, IAsyncDisposable, IDisposable
 {
     /// <summary>
     /// Лениво инициализируемая страница браузера.
     /// При первом обращении получает существующую страницу или создаёт новую.
     /// </summary>
-    private readonly Lazy<Task<IPage>> _page = new(
-        async () =>
+    private readonly Lazy<Task<IPage>> _page = new(async () =>
         {
             var context = await browserContextGetter.GetAsync();
             return context.Pages.FirstOrDefault() ?? await context.NewPageAsync();
@@ -50,6 +53,11 @@ public class PageProvider(IBrowserContextGetter browserContextGetter)
         try
         {
             var page = await task;
+            foreach (var beforeDisposeAction in beforeDisposeActions)
+            {
+                await beforeDisposeAction.ExecuteAsync(page);
+            }
+
             await page.CloseAsync();
         }
         catch (PlaywrightException)

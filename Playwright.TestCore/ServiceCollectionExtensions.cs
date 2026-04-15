@@ -28,9 +28,10 @@ public static class ServiceCollectionExtensions
         sc.AddScoped<IBrowserContextGetter, DefaultBrowserContextProvider>();
         sc.AddScoped<IBrowserContextFactory, DefaultBrowserContextFactory>();
         sc.UseAuthenticator<WithoutAuthAuthenticator, AuthWithCacheStrategy>();
-        sc.AddScoped<IContextTracing, ContextTracing>();
+        sc.AddScoped<IContextTracing, FullTracing>();
         sc.AddScoped<ITracingConfigurator, DefaultTracingConfigurator>();
         sc.AddScoped<IPageGetter, PageProvider>();
+        sc.AddScoped<IBeforeDisposePageActions, NoActions>();
         sc.AddScoped<ILocalStorage>(x => new LocalStorage(x.GetRequiredService<IPageGetter>()));
         return sc;
     }
@@ -60,14 +61,17 @@ public static class ServiceCollectionExtensions
         return sc;
     }
 
-    public static IServiceCollection ReplaceTracing<TTracing, TConfig>(this IServiceCollection sc)
+    public static IServiceCollection ReplaceTracing<TTracing, TConfig, TFailureProvider>(this IServiceCollection sc)
         where TTracing : class, IContextTracing
         where TConfig : class, ITracingConfigurator
+        where TFailureProvider : class, IFailureTestResult
     {
         sc.RemoveAll<IContextTracing>();
         sc.RemoveAll<ITracingConfigurator>();
+        sc.RemoveAll<IFailureTestResult>();
         sc.AddScoped<IContextTracing, TTracing>();
         sc.AddScoped<ITracingConfigurator, TConfig>();
+        sc.AddScoped<IFailureTestResult, TFailureProvider>();
         return sc;
     }
 

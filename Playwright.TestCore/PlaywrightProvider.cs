@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Playwright;
 using SkbKontur.Playwright.TestCore.Configurations;
 
-namespace SkbKontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore;
 
 /// <summary>
 /// Фабрика для создания экземпляров Playwright с применением конфигурации.
