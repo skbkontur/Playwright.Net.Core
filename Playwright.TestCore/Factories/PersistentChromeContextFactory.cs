@@ -10,14 +10,13 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 /// Фабрика для создания персистентных контекстов браузера Chrome.
 /// Каждый контекст сохраняется в отдельной директории пользователя.
 /// </summary>
-/// <param name="playwrightFactory">Фабрика для получения экземпляра Playwright</param>
+/// <param name="playwrightGetter">Фабрика для получения экземпляра Playwright</param>
 /// <param name="browserConfigurator">Конфигуратор параметров запуска браузера</param>
 /// <param name="testInfoGetter">Провайдер информации о текущем тесте</param>
-public class PersistentChromeFactory(
-    IPlaywrightFactory playwrightFactory,
-    IBrowserConfigurator browserConfigurator,
-    ITestInfoGetter testInfoGetter)
-    : IBrowserFactory
+public class PersistentChromeContextFactory(
+    IPlaywrightGetter playwrightGetter,
+    IBrowserConfigurator browserConfigurator
+) : IBrowserContextFactory
 {
     /// <summary>
     /// Создать новый персистентный контекст браузера Chrome.
@@ -26,8 +25,8 @@ public class PersistentChromeFactory(
     /// <returns>Задача, возвращающая созданный персистентный контекст браузера</returns>
     public async Task<IBrowserContext> CreateAsync()
     {
-        var pw = await playwrightFactory.GetPlaywrightAsync();
-        var userDir = Path.GetFullPath($"{testInfoGetter.WorkDirectory}/{Guid.NewGuid()}");
+        var pw = await playwrightGetter.GetPlaywrightAsync();
+        var userDir = Path.GetFullPath($"{AppContext.BaseDirectory}/{Guid.NewGuid()}");
         var browser = await pw.Chromium.LaunchPersistentContextAsync(
             userDir,
             browserConfigurator.GetLaunchPersistentContextOptions()

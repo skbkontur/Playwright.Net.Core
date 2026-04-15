@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Microsoft.Playwright;
 
@@ -8,8 +9,12 @@ namespace SkbKontur.Playwright.TestCore.Configurations;
 /// Сохраняет трассировку в файл с именем теста.
 /// </summary>
 /// <param name="infoGetter">Провайдер информации о текущем тесте</param>
-public class DefaultTracingConfigurator(ITestInfoGetter infoGetter) : ITracingConfigurator
+public class DefaultTracingConfigurator : ITracingConfigurator
 {
+    public string TestName { get; } = $"Unknown_{nameof(TestName)}_{Guid.NewGuid()}";
+    public string TestClassName { get; } = $"Unknown_{nameof(TestClassName)}_{Guid.NewGuid()}";
+    public string WorkDirectory { get; } = AppContext.BaseDirectory;
+    
     /// <summary>
     /// Получить параметры начала трассировки для текущего теста.
     /// Включает скриншоты, снимки DOM и исходный код.
@@ -19,7 +24,7 @@ public class DefaultTracingConfigurator(ITestInfoGetter infoGetter) : ITracingCo
     {
         return new TracingStartOptions
         {
-            Title = $"{infoGetter.TestClassName}.{infoGetter.TestName}",
+            Title = $"{TestClassName}.{TestName}",
             Screenshots = true,
             Snapshots = true,
             Sources = true
@@ -34,9 +39,9 @@ public class DefaultTracingConfigurator(ITestInfoGetter infoGetter) : ITracingCo
     public TracingStopOptions GetTracingStopOptions()
     {
         var path = Path.Combine(
-            infoGetter.WorkDirectory,
+            WorkDirectory,
             "playwright-traces",
-            $"{infoGetter.TestClassName}.{infoGetter.TestName}.zip"
+            $"{TestClassName}.{TestName}.zip"
         );
         return new TracingStopOptions {Path = path};
     }

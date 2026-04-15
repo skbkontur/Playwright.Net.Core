@@ -9,13 +9,14 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 /// Абстрактная базовая фабрика для создания браузерных контекстов.
 /// Определяет общий алгоритм создания контекста с применением стратегии аутентификации.
 /// </summary>
-/// <param name="playwrightFactory">Фабрика для получения экземпляра Playwright</param>
+/// <param name="browserGetter">Провайдер получения экземпляра Playwright</param>
 /// <param name="authStrategy">Стратегия аутентификации для применения к контексту браузера</param>
-public abstract class BrowserFactoryBase(
-    IPlaywrightFactory playwrightFactory,
+/// <param name="contextUpdater">Дополнительные параметры для применения к контексту браузера</param>
+public class DefaultBrowserContextFactory(
+    IBrowserGetter browserGetter,
     IAuthStrategy authStrategy,
     IContextOptionsUpdater contextUpdater
-) : IBrowserFactory
+) : IBrowserContextFactory
 {
     /// <summary>
     /// Создать новый контекст браузера с применением стратегии аутентификации.
@@ -23,8 +24,7 @@ public abstract class BrowserFactoryBase(
     /// <returns>Задача, возвращающая созданный IBrowserContext</returns>
     public virtual async Task<IBrowserContext> CreateAsync()
     {
-        var pw = await playwrightFactory.GetPlaywrightAsync();
-        var browser = await LaunchAsync(pw);
+        var browser = await browserGetter.GetAsync();
         var storageState = await authStrategy.GetOrCreateStorageStateAsync();
         var options = new BrowserNewContextOptions
         {
@@ -33,12 +33,4 @@ public abstract class BrowserFactoryBase(
         await contextUpdater.ExecuteAsync(options);
         return await browser.NewContextAsync(options);
     }
-
-    /// <summary>
-    /// Абстрактный метод для запуска конкретного браузера.
-    /// Реализации должны определить, какой браузер запускать (Chrome, Firefox и т.д.).
-    /// </summary>
-    /// <param name="pw">Экземпляр Playwright</param>
-    /// <returns>Задача, возвращающая запущенный браузер</returns>
-    protected abstract Task<IBrowser> LaunchAsync(IPlaywright pw);
 }

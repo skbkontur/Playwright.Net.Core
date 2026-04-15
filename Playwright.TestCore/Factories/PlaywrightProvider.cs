@@ -10,7 +10,7 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 /// Использует ленивую инициализацию для создания единственного экземпляра Playwright.
 /// </summary>
 /// <typeparam name="TConfiguration">Тип конфигурации Playwright, должен реализовывать IPlaywrightConfiguration</typeparam>
-public class PlaywrightFactory<TConfiguration> : IPlaywrightFactory
+public class PlaywrightProvider<TConfiguration> : IPlaywrightGetter, IAsyncDisposable, IDisposable
     where TConfiguration : class, IPlaywrightConfiguration, new()
 {
     /// <summary>
@@ -30,4 +30,15 @@ public class PlaywrightFactory<TConfiguration> : IPlaywrightFactory
     /// <returns>Задача, возвращающая настроенный экземпляр IPlaywright</returns>
     public Task<IPlaywright> GetPlaywrightAsync()
         => Playwright.Value;
+
+    public void Dispose()
+    {
+        if (Playwright.IsValueCreated)
+        {
+            Playwright.Value.Dispose();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+        => await Task.Run(Dispose);
 }

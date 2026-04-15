@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,13 +9,13 @@ namespace SkbKontur.Playwright.TestCore.Auth;
 /// Выполняет аутентификацию один раз и кэширует результат для повторного использования.
 /// </summary>
 /// <param name="authenticator">Аутентификатор для выполнения процесса аутентификации</param>
-public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy
+public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy, IDisposable, IAsyncDisposable
 {
     /// <summary>
     /// Семафор для синхронизации доступа к кэшу состояния.
     /// </summary>
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
+
     /// <summary>
     /// Кэшированное состояние хранения браузера.
     /// </summary>
@@ -36,6 +37,7 @@ public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy
         {
             return _cachedStorageState;
         }
+
         await Semaphore.WaitAsync();
         try
         {
@@ -49,6 +51,27 @@ public class AuthWithCacheStrategy(IAuthenticator authenticator) : IAuthStrategy
         {
             Semaphore.Release();
         }
+
         return _cachedStorageState;
+    }
+
+    public void Dispose()
+    {
+        Semaphore.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Semaphore is IAsyncDisposable asyncDisposable)
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        else
+        {
+            Semaphore.Dispose();
+        }
+
+        _cachedStorageState = null;
+        _isInitialized = false;
     }
 }

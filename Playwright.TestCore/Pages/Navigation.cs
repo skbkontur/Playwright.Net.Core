@@ -44,7 +44,7 @@ public class Navigation(IPageGetter pageGetter, IPageFactory pageObjectsFactory)
     }
 
     /// <summary>
-    /// Выполняет прямой переход по указанному строковому URL.
+    /// Выполняет прямой переход на указанный URL.
     /// Используется для навигации, не привязанной к конкретному Page Object (например, внешние ссылки).
     /// </summary>
     /// <param name="url">Абсолютный или относительный URL для перехода.</param>

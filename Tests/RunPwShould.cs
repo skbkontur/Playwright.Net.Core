@@ -4,7 +4,6 @@ using NUnit.Framework;
 using SkbKontur.Playwright.TestCore;
 using SkbKontur.Playwright.TestCore.Browsers;
 using SkbKontur.Playwright.TestCore.Pages;
-using Tests.Infra;
 using Tests.POM.Pages;
 
 namespace Tests;
@@ -36,8 +35,9 @@ public class RunPwShould
     /// <summary>
     /// Статический провайдер сервисов с зарегистрированными компонентами Playwright.
     /// </summary>
-    private static IServiceProvider serviceProvider = new ServiceCollection()
-        .UsePlaywright()
+    private static readonly IServiceProvider ServiceProvider = new ServiceCollection()
+        .AddPlaywrightTestCore()
+        .UsePom()
         .BuildServiceProvider();
 
     /// <summary>
@@ -47,7 +47,7 @@ public class RunPwShould
     [Test]
     public async Task BeSuccess_FromScope()
     {
-        using var scope = serviceProvider.CreateScope();
+        using var scope = ServiceProvider.CreateScope();
         var services = scope.ServiceProvider;
         var navigation = services.GetRequiredService<Navigation>();
         var page = await navigation.GoToUrlAsync("https://kontur.ru");
@@ -67,7 +67,7 @@ public class RunPwShould
             "https://kontur.ru/products/reporting")]
         string url)
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var services = scope.ServiceProvider;
         var navigation = services.GetRequiredService<Navigation>();
         var page = await navigation.GoToUrlAsync(url);
@@ -82,7 +82,7 @@ public class RunPwShould
     [Test]
     public async Task BeSuccess_FromScope_WithPom()
     {
-        using var scope = serviceProvider.CreateScope();
+        using var scope = ServiceProvider.CreateScope();
         var services = scope.ServiceProvider;
         var navigation = services.GetRequiredService<Navigation>();
         var page = await navigation.GoToPageAsync<KonturPage>();
@@ -101,7 +101,7 @@ public class RunPwShould
             "/products/reporting")]
         string uri)
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var services = scope.ServiceProvider;
         var navigation = services.GetRequiredService<Navigation>();
         var page = await navigation.GoToPageAsync<KonturPage>(uri);
@@ -114,7 +114,7 @@ public class RunPwShould
         var key = value.ToString();
         var expectValue = (value * value).ToString();
 
-        await using var scope = serviceProvider.CreateAsyncScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var services = scope.ServiceProvider;
         var navigation = services.GetRequiredService<Navigation>();
         

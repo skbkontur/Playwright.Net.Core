@@ -7,7 +7,7 @@ namespace SkbKontur.Playwright.TestCore.Browsers;
 /// Интерфейс для получения контекста браузера.
 /// Определяет контракт для создания и управления браузерными контекстами.
 /// </summary>
-public interface IBrowserGetter
+public interface IBrowserContextGetter
 {
     /// <summary>
     /// Получить контекст браузера.

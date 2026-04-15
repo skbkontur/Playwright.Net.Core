@@ -7,7 +7,7 @@ namespace SkbKontur.Playwright.TestCore.Factories;
 /// Интерфейс фабрики для создания и управления экземплярами Playwright.
 /// Обеспечивает ленивую инициализацию и кэширование экземпляра Playwright.
 /// </summary>
-public interface IPlaywrightFactory
+public interface IPlaywrightGetter
 {
     /// <summary>
     /// Асинхронно получить экземпляр Playwright.

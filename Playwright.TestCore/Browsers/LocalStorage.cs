@@ -92,8 +92,17 @@ public class LocalStorage : ILocalStorage, IAsyncDisposable, IDisposable
     /// Освободить ресурсы и очистить localStorage.
     /// </summary>
     /// <returns>Задача завершения освобождения ресурсов</returns>
-    public ValueTask DisposeAsync()
-        => new ValueTask(ClearAsync());
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await ClearAsync();
+        }
+        catch (Exception _)
+        {
+            // возможно контекст уже был закрыт и очистка не требуется
+        }
+    }
 
     /// <summary>
     /// Синхронно освободить ресурсы и очистить localStorage.

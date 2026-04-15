@@ -10,8 +10,8 @@ namespace SkbKontur.Playwright.TestCore.Pages;
 /// Реализация получателя активной страницы браузера.
 /// Управляет жизненным циклом страницы в контексте браузера.
 /// </summary>
-/// <param name="browserGetter">Получатель контекста браузера</param>
-public class PageProvider(IBrowserGetter browserGetter)
+/// <param name="browserContextGetter">Получатель контекста браузера</param>
+public class PageProvider(IBrowserContextGetter browserContextGetter)
     : IPageGetter, IAsyncDisposable, IDisposable
 {
     /// <summary>
@@ -21,7 +21,7 @@ public class PageProvider(IBrowserGetter browserGetter)
     private readonly Lazy<Task<IPage>> _page = new(
         async () =>
         {
-            var context = await browserGetter.GetAsync();
+            var context = await browserContextGetter.GetAsync();
             return context.Pages.FirstOrDefault() ?? await context.NewPageAsync();
         }
     );
