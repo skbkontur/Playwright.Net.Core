@@ -38,6 +38,8 @@ public class RunPwShould
     private static readonly IServiceProvider ServiceProvider = new ServiceCollection()
         .AddPlaywrightTestCore()
         .UsePom()
+        .OffAutoAuth()
+        .OffTracing()
         .BuildServiceProvider();
 
     /// <summary>

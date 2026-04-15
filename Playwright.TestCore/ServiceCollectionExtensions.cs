@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
     /// <returns>Расширенная коллекция сервисов</returns>
     public static IServiceCollection AddPlaywrightTestCore(this IServiceCollection sc)
         => sc.AddPlaywrightTestCore<DefaultPlaywrightConfiguration, SingletonBrowserProvider>();
-    
+
     /// <summary>
     /// Зарегистрировать все компоненты Playwright TestCore в DI контейнере с указанной конфигурацией и провайдером браузера.
     /// </summary>
@@ -122,8 +122,29 @@ public static class ServiceCollectionExtensions
     {
         sc.RemoveAll<IAuthenticator>();
         sc.RemoveAll<IAuthStrategy>();
-        sc.AddScoped<IAuthenticator, TAuthenticator>();
-        sc.AddScoped<IAuthStrategy, TStrategy>();
+        sc.AddSingleton<IAuthenticator, TAuthenticator>();
+        sc.AddSingleton<IAuthStrategy, TStrategy>();
         return sc;
     }
+
+    /// <summary>
+    /// Заменить реализации трассировок DI контейнере на заглушки.
+    /// </summary>
+    /// <param name="sc">Коллекция сервисов для расширения</param>
+    /// <returns>Расширенная коллекция сервисов</returns>
+    public static IServiceCollection OffTracing(this IServiceCollection sc)
+    {
+        sc.RemoveAll<ITracingConfigurator>();
+        sc.RemoveAll<IContextTracing>();
+        sc.AddSingleton<IContextTracing, NoTracing>();
+        return sc;
+    }
+
+    /// <summary>
+    /// Заменяет стратегию и кеш авторизации на заглушки.
+    /// </summary>
+    /// <param name="sc">Коллекция сервисов для расширения</param>
+    /// <returns>Расширенная коллекция сервисов</returns>
+    public static IServiceCollection OffAutoAuth(this IServiceCollection sc)
+        => sc.UseAuthenticator<WithoutAuthAuthenticator, WithoutAuthStrategy>();
 }
