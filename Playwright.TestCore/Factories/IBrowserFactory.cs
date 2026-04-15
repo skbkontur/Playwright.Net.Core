@@ -4,14 +4,13 @@ using Microsoft.Playwright;
 namespace SkbKontur.Playwright.TestCore.Factories;
 
 /// <summary>
-/// Интерфейс фабрики для создания контекстов браузеров.
-/// Определяет контракт для различных реализаций создания браузерных контекстов.
+/// Интерфейс фабрики для создания браузеров.
 /// </summary>
 public interface IBrowserFactory
 {
     /// <summary>
-    /// Асинхронно создать новый контекст браузера.
+    /// Асинхронно создать новый браузер.
     /// </summary>
-    /// <returns>Задача, возвращающая созданный IBrowserContext</returns>
-    Task<IBrowserContext> CreateAsync();
+    /// <returns>Задача, возвращающая созданный IBrowser</returns>
+    Task<IBrowser> CreateAsync();
 }

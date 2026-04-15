@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 
-namespace SkbKontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore;
 
 /// <summary>
 /// Интерфейс фабрики для создания и управления экземплярами Playwright.
 /// Обеспечивает ленивую инициализацию и кэширование экземпляра Playwright.
 /// </summary>
-public interface IPlaywrightFactory
+public interface IPlaywrightGetter
 {
     /// <summary>
     /// Асинхронно получить экземпляр Playwright.

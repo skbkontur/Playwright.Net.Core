@@ -8,12 +8,12 @@ namespace SkbKontur.Playwright.TestCore.Browsers;
 /// <summary>
 /// Управляет жизненным циклом контекста браузера и автоматически запускает/останавливает трассировку.
 /// </summary>
-/// <param name="browserFactory">Фабрика для создания контекстов браузера</param>
+/// <param name="browserContextFactory">Фабрика для создания контекстов браузера</param>
 /// <param name="contextTracing">Сервис для управления трассировкой контекста</param>
-public class DefaultBrowserProvider(
-    IBrowserFactory browserFactory,
+public class DefaultBrowserContextProvider(
+    IBrowserContextFactory browserContextFactory,
     IContextTracing tracing
-) : IBrowserGetter, IAsyncDisposable, IDisposable
+) : IBrowserContextGetter, IAsyncDisposable, IDisposable
 {
     /// <summary>
     /// Лениво инициализируемый контекст браузера.
@@ -21,7 +21,7 @@ public class DefaultBrowserProvider(
     /// </summary>
     private readonly Lazy<Task<IBrowserContext>> _browserContext = new(async () =>
     {
-        var context = await browserFactory.CreateAsync();
+        var context = await browserContextFactory.CreateAsync();
         await tracing.StartAsync(context);
         return context;
     });

@@ -3,14 +3,15 @@ using System.Threading.Tasks;
 using Microsoft.Playwright;
 using SkbKontur.Playwright.TestCore.Configurations;
 
-namespace SkbKontur.Playwright.TestCore.Factories;
+namespace SkbKontur.Playwright.TestCore;
 
 /// <summary>
-/// Фабрика для создания экземпляров Playwright с применением конфигурации.
+/// Провайдер экземпляров Playwright с применением конфигурации.
 /// Использует ленивую инициализацию для создания единственного экземпляра Playwright.
+/// Реализует IDisposable и IAsyncDisposable для корректного освобождения ресурсов.
 /// </summary>
 /// <typeparam name="TConfiguration">Тип конфигурации Playwright, должен реализовывать IPlaywrightConfiguration</typeparam>
-public class PlaywrightFactory<TConfiguration> : IPlaywrightFactory
+public class PlaywrightProvider<TConfiguration> : IPlaywrightGetter, IAsyncDisposable, IDisposable
     where TConfiguration : class, IPlaywrightConfiguration, new()
 {
     /// <summary>
@@ -30,4 +31,21 @@ public class PlaywrightFactory<TConfiguration> : IPlaywrightFactory
     /// <returns>Задача, возвращающая настроенный экземпляр IPlaywright</returns>
     public Task<IPlaywright> GetPlaywrightAsync()
         => Playwright.Value;
+
+    /// <summary>
+    /// Освободить ресурсы экземпляра Playwright.
+    /// </summary>
+    public void Dispose()
+    {
+        if (Playwright.IsValueCreated)
+        {
+            Playwright.Value.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Асинхронно освободить ресурсы экземпляра Playwright.
+    /// </summary>
+    public async ValueTask DisposeAsync()
+        => await Task.Run(Dispose);
 }
